@@ -377,6 +377,63 @@ def test_declaring_at_home_wins_on_the_spot(tables):
     assert g.winner == 0
 
 
+class AlwaysDeclares(Policy):
+    DECLARE_URGENT = 0          # any opponent at all is reason enough
+
+
+def test_default_player_declares_when_home_is_near_and_waits_when_it_is_far(tables):
+    g = Game(4, 1, tables)
+    p, rivals = g.players[0], g.players[1:]
+    t, hops = tables, tables.hops
+    home = t.city_node[p.home]
+    p.cash = TARGET_CASH
+    typical = t.typical_hops(home) / Policy.MOVE
+    cities = sorted((c for c in range(g.dest.count) if t.city_node[c] != home),
+                    key=lambda c: hops[t.city_node[c]][home])
+
+    def stand(q, node):
+        q.dots, q.step = (node,), 0
+
+    def ask(city, superchief=False):
+        p.city, p.superchief = city, superchief
+        return p.policy.choose_declare(g, p)
+
+    def clear_the_way(city):
+        way = t.shortest(t.city_node[city], home)[0]
+        for q in rivals:
+            stand(q, max(range(len(hops)), key=lambda n: min(hops[n][d] for d in way)))
+        return way
+
+    near, far = cities[0], cities[-1]
+    clear_the_way(near)
+    assert ask(near)                                    # closer than a typical city: go
+    clear_the_way(far)
+    assert not ask(far)                                 # further: another trip will end closer
+    p.city = p.home
+    assert p.policy.choose_declare(g, p)                # at home it is a win on the spot
+
+    # A Superchief makes the same distance fewer turns.
+    fast = next(c for c in cities if hops[t.city_node[c]][home] / Policy.MOVE > typical
+                >= hops[t.city_node[c]][home] / Policy.MOVE_SUPERCHIEF)
+    clear_the_way(fast)
+    assert not ask(fast) and ask(fast, superchief=True)
+
+    # An opponent near the way home halves the trip worth risking.
+    risky = next(c for c in cities if typical / 2 < hops[t.city_node[c]][home] / Policy.MOVE <= typical)
+    way = clear_the_way(risky)
+    assert ask(risky)
+    stand(rivals[0], way[len(way) // 2])
+    assert not ask(risky)
+
+    # No time to wait once an opponent is close to winning, or already declared.
+    clear_the_way(far)
+    rivals[1].cash = int(TARGET_CASH * Policy.DECLARE_URGENT)
+    assert ask(far)
+    rivals[1].cash = STARTING_CASH
+    rivals[1].declared = True
+    assert ask(far)
+
+
 def test_declared_player_heads_home_and_wins_there(tables):
     g = Game(3, 5, tables, record=True)
     p = g.players[0]
@@ -384,6 +441,7 @@ def test_declared_player_heads_home_and_wins_there(tables):
     far = max(range(g.dest.count), key=lambda c: tables.hops[tables.city_node[c]][tables.city_node[p.home]])
     p.city = far
     p.dots = (tables.city_node[far],)
+    p.policy = AlwaysDeclares()
     g.play_turn()
     assert p.declared and p.goal == tables.city_node[p.home] and p.destination >= 0
     while g.winner is None and g.turn < 300:
@@ -400,6 +458,7 @@ def test_declared_player_who_drops_below_the_target_goes_to_the_alternate(tables
     far = max(range(g.dest.count), key=lambda c: tables.hops[tables.city_node[c]][tables.city_node[p.home]])
     p.city = far
     p.dots = (tables.city_node[far],)
+    p.policy = AlwaysDeclares()
     g.play_turn()                                       # declares, moves, pays $1,000, falls short
     assert not p.declared and p.destination >= 0
     assert p.goal == tables.city_node[p.destination]

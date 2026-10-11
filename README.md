@@ -72,7 +72,7 @@ These are all the ways a player can influence the game. Each is one method in `p
 | 1 | Region, after rolling your own | `choose_region` | Highest average payoff from the current city |
 | 2 | Route, and railroad on shared track | `choose_route` | Weighs the shortest route against one detour found by search |
 | 3 | Purchase after a payoff | `choose_purchase` | Express at once. Best-value railroad, keeping a cash reserve. Superchief once no railroads are left. |
-| 4 | Declare at $200,000 | `choose_declare` | Always |
+| 4 | Declare at $200,000, or take another trip first | `choose_declare` | Declares if home is nearer than from a typical city, in turns for the player's train, with less tolerance per opponent near the way. Always declares once an opponent is close to winning. |
 | 5 | Forced sale: which line, bank or auction | `choose_sale` | Least valuable line, by auction |
 | 6 | Auction bid | `max_bid` | Up to the line's value, never into the reserve |
 | 7 | Rover play: chase a declared player | `choose_rover` | Chases when the chance of catching them this turn is worth the detour |

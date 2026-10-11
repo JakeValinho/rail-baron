@@ -110,6 +110,7 @@ class Tables:
 
         self._shortest: dict[int, tuple] = {}
         self._mass: dict[int, float] = {}
+        self._typical: dict[int, float] = {}
 
         # toll[r]: share of trips whose shortest route has a piece of track
         # that only railroad r serves. A measure of how often others need it.
@@ -168,6 +169,15 @@ class Tables:
                 total += prob[low.bit_length() - 1]
                 m ^= low
             self._mass[mask] = total
+        return total
+
+    def typical_hops(self, node: int) -> float:
+        """Average dots from a random destination city to `node`."""
+        total = self._typical.get(node)
+        if total is None:
+            hops = self.hops
+            total = sum(prob * hops[n][node] for prob, n in zip(self.place_prob, self.place_node))
+            self._typical[node] = total
         return total
 
 

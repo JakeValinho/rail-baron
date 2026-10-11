@@ -7,7 +7,7 @@ Policy, override the method, and hand it to Game(policies=...).
     1. choose_region     which region to take after rolling your own region
     2. choose_route      which way to travel, and which railroad on shared track
     3. choose_purchase   what to buy after a payoff, if anything
-    4. choose_declare    whether to head home once you have the winning cash
+    4. choose_declare    whether to head home once you have the winning cash, or wait
     5. choose_sale       which railroad to give up when you cannot pay, and how
     6. max_bid           how high to go when someone else's railroad is auctioned
     7. choose_rover      whether to turn aside and chase a declared player
@@ -44,6 +44,12 @@ class Policy:
     LOCK_WEIGHT = 1.0       # a city an opponent can then only reach by paying
     TOLL_WEIGHT = 0.5       # track that shortest routes are forced over
     MIN_RETURN = 1.0        # buy only if value is at least this many times the price
+
+    # ---- declaring
+    DECLARE_PATIENCE = 1.0  # declare if home is no further than this many times a typical trip home
+    DECLARE_REACH = 12      # an opponent within this many dots of the way home may catch the player
+    DECLARE_THREAT = 1.0    # how much each such opponent shortens the trip the player will risk
+    DECLARE_URGENT = 0.75   # stop waiting once an opponent has this share of the winning cash
 
     # ---- the rover play
     STOP_VALUE = 50000      # what stopping someone else's win is worth, on top of the prize
@@ -185,11 +191,45 @@ class Policy:
     # ------------------------------------------------------------------
     # 4. PLAYER CHOICE: declare and head home, once cash reaches the target.
     #
-    # Always declares. The risk it ignores: an opponent close enough to
-    # catch the player on the way home and collect $50,000.
+    # Declining means taking an ordinary trip, with its payoff, and being
+    # asked again where that trip ends. Four things are weighed:
+    #
+    #   distance   Turns to get home from here, against the turns it takes
+    #              from a typical destination. Further than typical: another
+    #              trip will probably end closer, so wait.
+    #   train      A Superchief covers the distance in fewer turns.
+    #   threats    Each opponent within DECLARE_REACH dots of the way home
+    #              shortens the trip the player is willing to risk.
+    #   urgency    If an opponent is declared, or has DECLARE_URGENT of the
+    #              winning cash, there is no time to wait: declare.
+    #
+    # It ignores how much cash the player has above the target, and so the
+    # chance of fees pulling them back under it on the way.
     # ------------------------------------------------------------------
     def choose_declare(self, game, p) -> bool:
-        return True
+        t = game.tables
+        here, home = t.city_node[p.city], t.city_node[p.home]
+        if here == home:
+            return True                         # wins on the spot
+        rivals = [q for q in game.players if q is not p and not q.out]
+        pressing = game.target_cash * self.DECLARE_URGENT
+        for q in rivals:
+            if q.declared or q.cash >= pressing:
+                return True
+        hops = t.hops
+        threats = 0
+        if self.DECLARE_THREAT:
+            way = t.shortest(here, home)[0]
+            reach = self.DECLARE_REACH
+            for q in rivals:
+                near = hops[q.dots[q.step] if q.dots else t.city_node[q.city]]
+                for d in way:
+                    if near[d] <= reach:
+                        threats += 1
+                        break
+        turns = hops[here][home] / (self.MOVE_SUPERCHIEF if p.superchief else self.MOVE)
+        typical = t.typical_hops(home) / self.MOVE
+        return turns * (1 + self.DECLARE_THREAT * threats) <= self.DECLARE_PATIENCE * typical
 
     # ------------------------------------------------------------------
     # 5. PLAYER CHOICE: forced sale. Which railroad, and bank or auction.
