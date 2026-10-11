@@ -7,7 +7,7 @@
 <style>
   :root {
     --bg: #12161c; --panel: #1a2029; --line: #2b3441; --text: #e6e9ee;
-    --muted: #8f9bab; --dot: #d3d9e2; --city: #f4f1e6; --halo: #12161c; --gold: #f2c14e;
+    --muted: #8f9bab; --bank: #4a5565; --dot: #d3d9e2; --city: #f4f1e6; --halo: #12161c; --gold: #f2c14e;
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; margin: 0; }
@@ -37,13 +37,23 @@
 
   #hint { position: absolute; left: 14px; bottom: 12px; color: var(--muted); font-size: 12px; pointer-events: none; }
   #tools { position: absolute; left: 14px; top: 12px; display: flex; gap: 10px; flex-wrap: wrap; }
-  #layout { display: flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
-  #layout button {
+  #layout, #ground { display: flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  #layout button, #ground button {
     background: var(--panel); color: var(--muted); border: 0; padding: 5px 12px; font: inherit; cursor: pointer;
   }
-  #layout button + button { border-left: 1px solid var(--line); }
-  #layout button.on { background: var(--text); color: var(--bg); font-weight: 600; }
+  #layout button + button, #ground button + button { border-left: 1px solid var(--line); }
+  #layout button.on, #ground button.on { background: var(--text); color: var(--bg); font-weight: 600; }
   #gLabels { transition: opacity .2s; }
+  #mapWrap { transition: background-color .3s; }
+  #gLand { opacity: 0; transition: opacity .3s; pointer-events: none; }
+  #gLand path { stroke-linejoin: round; }
+  #gLand .neighbour { fill: #2a302c; stroke: #3d4640; stroke-width: 1; }
+  #gLand .land { fill: #3b4233; stroke: #6b7458; stroke-width: 1.4; }
+  #gLand .lake { fill: #16324c; stroke: #2c5273; stroke-width: 1; }
+  #mapWrap.land:not(.even) { background: #16324c; }
+  #mapWrap.land:not(.even) #gLand { opacity: 1; }
+  #mapWrap.land:not(.even) svg { --halo: #1c2118; --bank: #8b927e; }
+  #mapWrap.land.even #ground button.on { background: var(--muted); }
   #reset {
     background: var(--panel); color: var(--text);
     border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; font: inherit; cursor: pointer;
@@ -209,6 +219,10 @@
       <button data-layout="geo" class="on">Geographic</button>
       <button data-layout="even">Even spacing</button>
     </div>
+    <div id="ground">
+      <button data-ground="plain" class="on">Plain</button>
+      <button data-ground="land">Land and water</button>
+    </div>
   </div>
   <div id="hint">Scroll to zoom, drag to pan. Hover a line or city for details. Click to pin a railroad.</div>
   </div>
@@ -297,6 +311,9 @@ const money = v => "$" + v.toLocaleString("en-US");
 const esc = s => s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
 
 // ---------------------------------------------------------------- drawing
+const gLand = el("g", { id: "gLand" }, svg);
+for (const shape of DATA.land || [])
+  el("path", { class: shape.kind, d: "M" + shape.points.map(([x, y]) => `${x * SCALE} ${y * SCALE}`).join("L") + "Z" }, gLand);
 const gTracks = el("g", {}, svg), gOverlay = el("g", {}, svg), gHits = el("g", {}, svg);
 const gDots = el("g", {}, svg), gRings = el("g", {}, svg), gLabels = el("g", { id: "gLabels" }, svg);
 
@@ -644,7 +661,7 @@ svg.addEventListener("click", e => {
 // purchase and payment. This section only replays them. It applies no rules.
 const GAMES = DATA.games || [];
 const PCOLOR = ["#ff6b6b", "#4dabf7", "#ffd43b", "#69db7c", "#c692ff", "#ffa94d"];
-const BANK_COLOR = "#4a5565";
+const BANK_COLOR = "var(--bank)";
 const gPlayLayer = el("g", {}, svg);
 const faces3 = k => [Math.floor(k / 36) + 1, Math.floor(k / 6) % 6 + 1, k % 6 + 1];
 let G = null, STATES = [], gPos = 0, gRun = 0, gPlaying = false, gSpeed = 1, gPaint = "owner", painted = "";
@@ -898,9 +915,17 @@ const HINTS = {
   even: "Even spacing: every piece of track is about the same length, so distance on screen is distance in moves.",
 };
 let layout = "geo", morph = 0;
+const mapWrap = document.getElementById("mapWrap");
+function setGround(name) {
+  mapWrap.classList.toggle("land", name === "land");
+  document.querySelectorAll("#ground button").forEach(b => b.classList.toggle("on", b.dataset.ground === name));
+}
+document.querySelectorAll("#ground button").forEach(b => b.onclick = () => setGround(b.dataset.ground));
+if (LINKS.includes("land")) setGround("land");      // map.html#land
 function setLayout(name, ms = 700) {
   if (name === layout) return;
   layout = name;
+  mapWrap.classList.toggle("even", name === "even");     // the land only fits the geographic map
   document.querySelectorAll("#layout button").forEach(b => b.classList.toggle("on", b.dataset.layout === name));
   document.getElementById("hint").textContent = HINTS[name];
   const from = {}, to = LAYOUTS[name];

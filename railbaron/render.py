@@ -17,6 +17,7 @@ from pathlib import Path
 
 from .board import Board
 from .destinations import REGIONS, Destinations
+from .geography import land_shapes
 from .layout import even_layout, geographic_layout
 
 TEMPLATE = Path(__file__).with_name("map_template.html")
@@ -89,7 +90,7 @@ def build_payload(board: Board, games: list | None = None, open_tab: str | None 
         "richest": dest.richest_region,
     }
     return {"nodes": nodes, "segments": segments, "railroads": railroads, "cities": cities,
-            "destinations": destinations, "games": games, "open_tab": open_tab}
+            "destinations": destinations, "games": games, "open_tab": open_tab, "land": land_shapes(board)}
 
 
 def render(out: Path | str = DEFAULT_OUT, board: Board | None = None,

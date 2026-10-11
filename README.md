@@ -32,6 +32,7 @@ Links into the page, joined with `&`:
 | Link | Opens |
 |---|---|
 | `map.html#even` | Even-spacing layout |
+| `map.html#land` | Land-and-water background |
 | `map.html#UP` | A railroad highlighted, by short name |
 | `map.html#roll=5` | Destinations tab after five rolls |
 | `map.html#game=1&turn=40` | Second recorded game at turn 40 |
@@ -50,6 +51,7 @@ Data flows one way: CSV files, then lookup tables, then the engine, then the pag
 | `railbaron/game.py` | **The rules.** Turns, movement, fees, purchases, sales, auctions, winning. |
 | `railbaron/policy.py` | **The decisions.** Every choice a player makes, and nothing else. |
 | `railbaron/layout.py` | Dot positions: geographic, and even-spacing. |
+| `railbaron/geography.py` | Rough outline of the country, bent to fit the board. Background only. |
 | `railbaron/render.py` | Packs board, tables and recorded games into `map_template.html`, written out as `map.html`. |
 | `tests/` | One test file per module. `test_game.py` replays recorded games and checks every event against the rules. |
 
