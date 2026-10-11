@@ -22,6 +22,9 @@ A turn
 4. Boxcars, or doubles with an Express, or any roll with a Superchief,
    earns a bonus roll of one die. If the trip has just ended, the bonus
    roll starts the next one.
+   A player who moves onto or through the dot of a declared player
+   catches them: the rover play. The declared player pays $50,000, is no
+   longer declared, and must go to their alternate destination.
 5. They pay for the track ridden this turn: $1,000 to the bank for any of
    their own or the bank's lines, and the going rate to each opponent whose
    line they used. A player who cannot pay must sell railroads, to the bank
@@ -29,7 +32,6 @@ A turn
 
 Not in the engine, or simplified
 --------------------------------
-* The rover play. Nobody can catch a declared player.
 * A declared player who reaches home skips any bonus roll that turn.
 * The optional rules. A Superchief is always $40,000.
 * Seat 1 always goes first; there is no roll for it.
@@ -54,6 +56,7 @@ EXPRESS_PRICE = 4_000
 SUPERCHIEF_PRICE = 40_000
 FEE = 5_000                 # paid to an opponent for using their track
 FEE_ALL_SOLD = 10_000       # ... once every railroad has been bought
+ROVER_PRIZE = 50_000        # paid by a declared player to the first pawn that catches them
 MAX_ROUNDS = 2_000
 
 MOVE = tuple(a + b for a in range(1, 7) for b in range(1, 7))   # two dice, by roll number 0..35
@@ -115,6 +118,7 @@ class Game:
         self.target_cash = target_cash
         self.express_price = EXPRESS_PRICE
         self.superchief_price = SUPERCHIEF_PRICE
+        self.rover_prize = ROVER_PRIZE
         self.rand = random.Random(seed).random
         if policies is None:
             policies = DEFAULT_POLICY
@@ -129,6 +133,7 @@ class Game:
         self.seat = 0                       # whose turn it is
         self.turn = 0                       # turns taken so far, all players together
         self.winner: Optional[int] = None
+        self.declared = 0                   # how many players are declared and heading home
         self.bank_due = 0                   # fees run up by the player now moving
         self.due: dict = {}
         self.recording: Optional[dict] = None
@@ -190,6 +195,7 @@ class Game:
             return False
         p.destination, p.trip_from = city, p.city
         p.declared, p.at_home, p.trail = declared, False, None
+        self.declared += declared
         goal = t.city_node[p.home] if declared else t.city_node[city]
         self._plan(p, t.city_node[p.city], goal, None, ev)
         return True
@@ -199,23 +205,55 @@ class Game:
         p.step, p.goal, p.replan = 0, goal, False
         if ev is not None:
             ids = self.tables.node_ids
-            ev.append({"t": "route", "nodes": [ids[n] for n in p.dots], "rrs": list(p.rrs),
+            ev.append({"t": "route", "p": p.index, "nodes": [ids[n] for n in p.dots], "rrs": list(p.rrs),
                        "options": self.route_note})
 
-    def _replan(self, p: Player, ev) -> None:
-        """Choose a new route from where the player stands, mid-trip."""
-        trail = p.trail or []
+    def _ridden(self, p: Player):
+        """Track ridden so far this trip: (the list, the same as a blocked set)."""
+        trail = list(p.trail or [])
         trail.extend(zip(p.dots, p.dots[1:p.step + 1], p.rrs))
-        p.trail = trail
         blocked = set()
         for a, b, r in trail:           # each piece of track is ridden once per trip
             blocked.add((a, b, r))
             blocked.add((b, a, r))
+        return trail, blocked
+
+    def _replan(self, p: Player, ev) -> None:
+        """Choose a new route from where the player stands, mid-trip."""
+        p.trail, blocked = self._ridden(p)
         self._plan(p, p.dots[p.step], p.goal, blocked, ev)
+
+    def _rover(self, p: Player, ev) -> None:
+        """Before p moves: let them turn aside to chase a declared player."""
+        for q in self.players:
+            if q.declared and q is not p and not p.declared and p.step < len(p.rrs):
+                trail, blocked = self._ridden(p)
+                route = p.policy.choose_rover(self, p, q, blocked)             # PLAYER CHOICE 7
+                if route is None:
+                    continue
+                dots, rrs = route
+                if dots[0] != p.dots[p.step] or dots[-1] != p.goal or len(rrs) != len(dots) - 1:
+                    raise ValueError("a rover route must run from where the player is to their destination")
+                p.trail, p.dots, p.rrs, p.step, p.replan = trail, dots, rrs, 0, False
+                if ev is not None:
+                    ids = self.tables.node_ids
+                    ev.append({"t": "rover", "target": q.index, "nodes": [ids[n] for n in dots], "rrs": list(rrs)})
+                return
+
+    def _catch(self, p: Player, q: Player, ev) -> None:
+        """p has moved onto or through declared player q: the rover play."""
+        paid = min(self.rover_prize, q.cash)
+        q.cash -= paid
+        p.cash += paid
+        if ev is not None:
+            ev.append({"t": "caught", "p": q.index, "by": p.index, "pay": paid})
+        self._undeclare(q, ev)
 
     # ----------------------------------------------------------- movement
 
     def _move(self, p: Player, count: int, ev, dice) -> None:
+        if self.declared:
+            self._rover(p, ev)
         if p.replan and p.step < len(p.rrs):
             self._replan(p, ev)
         start, last = p.step, len(p.rrs)
@@ -242,6 +280,13 @@ class Game:
         p.step = to
         if ev is not None:
             ev.append({"t": "move", "dice": dice, "bonus": len(dice) == 1, "from": start, "to": to})
+        if self.declared:
+            # The rover play: only the first pawn to reach a declared player
+            # collects, because being caught ends the declaration.
+            passed = p.dots[start + 1:to + 1]
+            for q in self.players:
+                if q.declared and q is not p and q.dots[q.step] in passed:
+                    self._catch(p, q, ev)
         if to == last:
             self._arrive(p, ev)
 
@@ -251,13 +296,13 @@ class Game:
             p.at_home = True
             if t.city_place[p.destination] != t.city_place[p.home]:
                 if ev is not None:
-                    ev.append({"t": "home"})
+                    ev.append({"t": "home", "p": p.index})
                 return                  # no payoff for reaching home; the win is settled after fees
         pay = self.dest.payoff[p.trip_from][p.destination]
         p.cash += pay
         p.trips += 1
         if ev is not None:
-            ev.append({"t": "arrive", "city": p.destination, "from": p.trip_from, "pay": pay})
+            ev.append({"t": "arrive", "p": p.index, "city": p.destination, "from": p.trip_from, "pay": pay})
         p.city, p.destination = p.destination, -1
 
         choice = p.policy.choose_purchase(self, p)                              # PLAYER CHOICE 3
@@ -283,7 +328,7 @@ class Game:
             self._transfer(choice, p.index)
         if ev is not None:
             item = "express" if choice == EXPRESS else "superchief" if choice == SUPERCHIEF else "line"
-            ev.append({"t": "buy", "item": item, "rr": choice if choice >= 0 else None, "price": price,
+            ev.append({"t": "buy", "p": p.index, "item": item, "rr": choice if choice >= 0 else None, "price": price,
                        "considered": self.buy_note if choice >= 0 else None})
 
     # ---------------------------------------------------------- ownership
@@ -401,6 +446,7 @@ class Game:
                     p.cash -= paid
                 p.cash = 0
                 p.out = True
+                self.declared -= p.declared
                 p.declared = False
                 p.destination = -1
                 if ev is not None:
@@ -423,9 +469,13 @@ class Game:
                 if ev is not None:
                     ev.append({"t": "win", "how": "reached home", "p": p.index})
             return
-        # Fell below the target: carry on to the alternate destination,
-        # as part of the same trip.
+        self._undeclare(p, ev)          # fell below the target
+
+    def _undeclare(self, p: Player, ev) -> None:
+        """No longer declared: carry on to the alternate destination, as
+        part of the same trip."""
         p.declared = p.at_home = False
+        self.declared -= 1
         if ev is not None:
             ev.append({"t": "undeclare", "p": p.index})
         if p.destination < 0:

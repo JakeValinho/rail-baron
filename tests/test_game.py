@@ -2,8 +2,8 @@ import random
 
 import pytest
 
-from railbaron.game import (EXPRESS_PRICE, FEE, FEE_ALL_SOLD, MOVE, STARTING_CASH, SUPERCHIEF_PRICE,
-                            TARGET_CASH, Game, record_games, simulate)
+from railbaron.game import (EXPRESS_PRICE, FEE, FEE_ALL_SOLD, MOVE, ROVER_PRIZE, STARTING_CASH,
+                            SUPERCHIEF_PRICE, TARGET_CASH, Game, record_games, simulate)
 from railbaron.policy import BANK, BANK_FEE, EXPRESS, SUPERCHIEF, Policy
 from railbaron.tables import Tables, search
 
@@ -406,6 +406,97 @@ def test_declared_player_who_drops_below_the_target_goes_to_the_alternate(tables
     assert p.cash == TARGET_CASH + 500 - BANK_FEE
 
 
+# -------------------------------------------------------------- rover play
+
+
+def declare_on_the_way_home(g, q, start, alternate, steps):
+    """Make player q a declared player `steps` dots into the trip home from `start`."""
+    d, t = g.dest, g.tables
+    q.cash = TARGET_CASH + 60000
+    q.city = q.trip_from = d.index(start)
+    q.destination = d.index(alternate)
+    q.declared, q.at_home, q.trail, q.est = True, False, None, None
+    g.declared += 1
+    q.dots, _, _, q.rrs = t.shortest(t.city_node[q.city], t.city_node[q.home])
+    q.step, q.goal = steps, q.dots[-1]
+
+
+def test_moving_through_a_declared_player_collects_50000_once(tables):
+    g = Game(4, 1, tables)
+    p, q, late = g.players[0], g.players[1], g.players[2]
+    q.home = g.dest.index("Chicago")
+    declare_on_the_way_home(g, q, "New York", "Miami", 4)     # on the NYC line, four dots out
+    spot = q.dot
+
+    put_on_trip(g, p, "New York", "Chicago")                    # the same line, behind q
+    ride(g, p, 7)                                               # passes through q's dot
+    assert spot in p.dots[1:8]
+    assert p.cash == STARTING_CASH + ROVER_PRIZE - BANK_FEE
+    assert q.cash == TARGET_CASH + 60000 - ROVER_PRIZE
+    assert not q.declared and g.declared == 0
+    assert q.goal == tables.city_node[g.dest.index("Miami")]    # sent to the alternate
+    assert q.dots[0] == spot                                    # from where they were caught
+
+    put_on_trip(g, late, "New York", "Chicago")                 # a second pawn gets nothing
+    ride(g, late, 7)
+    assert late.cash == STARTING_CASH - BANK_FEE
+
+
+def test_declared_player_passes_others_freely_and_landing_short_is_no_catch(tables):
+    g = Game(4, 1, tables)
+    p, q = g.players[0], g.players[1]
+    q.home = g.dest.index("Chicago")
+    declare_on_the_way_home(g, q, "New York", "Miami", 0)
+    put_on_trip(g, p, "New York", "Chicago")
+    ride(g, p, 3)                                               # p sits three dots up the line
+    assert q.declared                                           # starting on the same dot is no catch
+
+    g.bank_due, g.due = 0, {}
+    g._move(q, 6, None, [3, 3])                                 # q runs straight through p
+    assert q.declared and q.cash == TARGET_CASH + 60000 and p.cash == STARTING_CASH - BANK_FEE
+
+    ride(g, p, 2)                                               # p moves, but stops short of q
+    assert q.declared and p.cash == STARTING_CASH - 2 * BANK_FEE
+
+
+def test_default_player_chases_only_when_it_is_worth_it(tables):
+    g = Game(4, 1, tables)
+    p, q = g.players[0], g.players[1]
+    d = g.dest
+    q.home = d.index("Seattle")
+    declare_on_the_way_home(g, q, "Boston", "Miami", 0)         # q stands in Boston
+    put_on_trip(g, p, "New York", "Chicago")                    # Boston is three dots off p's way
+    target = q.dot
+    assert target not in p.dots
+
+    route = p.policy.choose_rover(g, p, q, set())
+    assert route is not None
+    dots, rrs = route
+    assert dots[0] == p.dot and dots[-1] == p.goal and target in dots[1:13]
+    tracks = [(min(a, b), max(a, b), r) for a, b, r in zip(dots, dots[1:], rrs)]
+    assert len(tracks) == len(set(tracks))                      # no track used twice, out and back
+
+    ride(g, p, 12)                                              # the engine asks, p chases and catches
+    assert p.cash == STARTING_CASH + ROVER_PRIZE - BANK_FEE and not q.declared
+
+    # Too far to reach in one roll: not worth turning aside.
+    g2 = Game(4, 1, tables)
+    p2, q2 = g2.players[0], g2.players[1]
+    q2.home = d.index("Seattle")
+    declare_on_the_way_home(g2, q2, "Miami", "Boston", 0)
+    put_on_trip(g2, p2, "New York", "Chicago")
+    assert p2.policy.choose_rover(g2, p2, q2, set()) is None
+
+    # A player who puts no value on travel time's cost of chasing still will not chase out of range,
+    # and one told chasing is worthless never does.
+    class Indifferent(Policy):
+        STOP_VALUE = -ROVER_PRIZE
+    p.policy = Indifferent()
+    declare_on_the_way_home(g, q, "Boston", "Miami", 0)
+    put_on_trip(g, p, "New York", "Chicago")
+    assert p.policy.choose_rover(g, p, q, set()) is None
+
+
 # ------------------------------------------------- whole games, checked
 
 
@@ -421,16 +512,59 @@ def check_recording(tables, rec):
     dest, route, step, trail = [None] * n, [None] * n, [0] * n, [set() for _ in range(n)]
     express, superchief, declared, out = [False] * n, [False] * n, [False] * n, [False] * n
     all_sold = False
+    turned_back = [False] * n
     assert len({tables.city_place[c] for c in city}) == n
 
     for turn in rec["turns"]:
         i = turn["p"]
         assert not out[i]
         ridden, pay, spent, to_bank, from_bank, bust, eligible = [], 0, 0, 0, 0, False, None
+        passed, owed_catch, caught = [], set(), set()
         rate = FEE_ALL_SOLD if all_sold else FEE
         for e in turn["ev"]:
             kind = e["t"]
-            if kind == "dest":
+            if kind in ("route", "arrive", "buy") and e.get("p", i) != i:
+                # Another player's business inside this turn: a caught player
+                # sets off for, or is already at, their alternate destination.
+                j = e["p"]
+                if kind == "route":
+                    dots = [index[x] for x in e["nodes"]]
+                    assert dots[0] == dot[j] and dots[-1] == tables.city_node[dest[j]]
+                    route[j], step[j] = (dots, e["rrs"]), 0
+                elif kind == "arrive":
+                    assert e["city"] == dest[j] and e["pay"] == d.payoff[city[j]][dest[j]]
+                    cash[j] += e["pay"]
+                    city[j], dest[j] = dest[j], None
+                else:
+                    cash[j] -= e["price"]
+                    if e["item"] == "line":
+                        owner[e["rr"]] = j
+                        all_sold = all_sold or BANK not in owner
+                    elif e["item"] == "express":
+                        express[j] = True
+                    else:
+                        superchief[j] = True
+                continue
+            if kind == "rover":
+                dots = [index[x] for x in e["nodes"]]
+                assert declared[e["target"]] and not declared[i]
+                assert dots[0] == dot[i] and dots[-1] == tables.city_node[dest[i]]
+                assert dot[e["target"]] in dots[1:13]                           # by way of the declared pawn
+                seen = set(trail[i])
+                for a, b, r in zip(dots, dots[1:], e["rrs"]):
+                    assert any(edge[0] == b and r in edge[1] for edge in tables.adj[a])
+                    assert (a, b, r) not in seen and (b, a, r) not in seen       # once per trip, both legs
+                    seen.add((a, b, r))
+                route[i], step[i] = (dots, e["rrs"]), 0
+            elif kind == "caught":
+                q = e["p"]
+                assert e["by"] == i and declared[q] and dot[q] in passed
+                assert e["pay"] == ROVER_PRIZE
+                cash[q] -= e["pay"]
+                cash[i] += e["pay"]
+                owed_catch.discard(q)
+                caught.add(q)
+            elif kind == "dest":
                 assert dest[i] is None
                 assert d.region[e["city"]] == e["region"]
                 assert tables.region_by_roll[e["region_roll"]] == e["rolled"]
@@ -440,6 +574,7 @@ def check_recording(tables, rec):
                 assert e["lost"] == (tables.city_place[e["city"]] == tables.city_place[city[i]])
                 if not e["lost"]:
                     dest[i], declared[i], trail[i] = e["city"], e["declared"], set()
+                    turned_back[i] = False
                     if e["declared"]:
                         assert cash[i] >= rec["target_cash"]
             elif kind == "route":
@@ -450,7 +585,9 @@ def check_recording(tables, rec):
                 assert len(e["rrs"]) == len(dots) - 1
                 for a, b, r in zip(dots, dots[1:], e["rrs"]):
                     assert any(edge[0] == b and r in edge[1] for edge in tables.adj[a])
-                    assert (a, b, r) not in trail[i] and (b, a, r) not in trail[i]   # once per trip
+                    # Once per trip. The one exception in the rules: a player turned back
+                    # from the trip home may re-use track if there is no other way on.
+                    assert turned_back[i] or ((a, b, r) not in trail[i] and (b, a, r) not in trail[i])
                 route[i], step[i] = (dots, e["rrs"]), 0
             elif kind == "move":
                 dots, rrs = route[i]
@@ -465,6 +602,8 @@ def check_recording(tables, rec):
                 for k in range(e["from"], e["to"]):
                     ridden.append(owner[rrs[k]])
                     trail[i].add((dots[k], dots[k + 1], rrs[k]))
+                passed = dots[e["from"] + 1:e["to"] + 1]
+                owed_catch |= {q for q in range(n) if q != i and declared[q] and dot[q] in passed}
                 step[i] = e["to"]
                 dot[i] = dots[step[i]]
             elif kind == "arrive":
@@ -518,13 +657,15 @@ def check_recording(tables, rec):
                 assert bust and i not in owner              # nothing left to sell
                 out[i] = True
             elif kind == "undeclare":
-                assert declared[e["p"]] and cash[e["p"]] < rec["target_cash"]
+                assert declared[e["p"]] and (cash[e["p"]] < rec["target_cash"] or e["p"] in caught)
                 declared[e["p"]] = False
+                turned_back[e["p"]] = True
             elif kind == "win":
                 w = e.get("p", i)
                 assert rec["winner"] == w
             else:
                 raise AssertionError(f"unknown event {kind}")
+        assert not owed_catch                           # every pawn passed over was caught
         if bust:
             cash = list(turn["cash"])                   # a bankrupt player's last cash is shared out
         else:

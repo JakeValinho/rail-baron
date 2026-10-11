@@ -151,7 +151,8 @@
   #gPlay.seg-main { flex: 1.6; color: #1b1503; background: var(--gold); font-weight: 700; }
   #gSeek { width: 100%; margin: 0; accent-color: var(--gold); flex: none; }
   #gWhen { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; margin-top: -8px; }
-  #gTurn { background: #10141a; border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; min-height: 190px; }
+  #gTurn { background: #10141a; border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; min-height: 190px; flex: none; }
+  #gScore, #gWhen { flex: none; }
   #gTurn .who { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
   #gTurn .rollrow { grid-template-columns: 46px auto 1fr; font-size: 12px; }
   #gTurn .pay { color: var(--gold); font-weight: 700; }
@@ -646,9 +647,14 @@ const rrName = r => esc(DATA.railroads[r].name);
 const cloneState = st => ({ players: st.players.map(p => ({ ...p })), owner: st.owner.slice(), winner: st.winner });
 // Apply one recorded event to a state. i is the player whose turn it is.
 function applyEvent(st, i, e) {
+  if (e.t === "caught") {             // the rover play: e.by catches declared player e.p
+    st.players[e.p].cash -= e.pay; st.players[e.by].cash += e.pay; st.players[e.p].declared = false;
+    return;
+  }
+  if (e.p != null && e.t !== "undeclare" && e.t !== "win") i = e.p;    // some events belong to another player
   const p = st.players[i];
   if (e.t === "dest") { if (!e.lost) { p.dest = e.city; p.declared = e.declared; } }
-  else if (e.t === "route") { p.route = e.nodes; p.rrs = e.rrs; p.step = 0; }
+  else if (e.t === "route" || e.t === "rover") { p.route = e.nodes; p.rrs = e.rrs; p.step = 0; }
   else if (e.t === "move") p.step = e.to;
   else if (e.t === "arrive") { p.city = e.city; p.dest = null; p.declared = false; p.trips++; p.cash += e.pay; }
   else if (e.t === "buy") {
@@ -733,7 +739,13 @@ function describeTurn(k) {
       const weighed = e.options && e.options.length > 1
         ? "Weighed: " + e.options.map(o => `${o.picked ? "<b>" : ""}${o.dots} dots, about ${money(o.fees)} in fees${o.picked ? "</b>" : ""}`).join(" or ")
         : "";
-      html += line(`Route: ${e.rrs.length} dots on ${lines}`, weighed);
+      const whose = e.p != null && e.p !== i ? `${pname(e.p)}'s new route` : "Route";
+      html += line(`${whose}: ${e.rrs.length} dots on ${lines}`, weighed);
+    } else if (e.t === "rover") {
+      html += line(`<b>Rover play.</b> Turns aside to chase ${pname(e.target)}.`, `New route: ${e.rrs.length} dots`);
+    } else if (e.t === "caught") {
+      html += line(`<b>Catches ${pname(e.p)}</b> and collects <span class="pay">${money(e.pay)}</span>`,
+                   `${pname(e.p)} is no longer declared and must go to the alternate destination.`);
     } else if (e.t === "move") {
       const left = p.route.length - 1 - e.to, roll = e.dice.reduce((a, c) => a + c, 0);
       const dice = e.bonus ? `<span class="die color">${dieHTML(e.dice[0]).slice(18)}` : dieHTML(e.dice[0]) + dieHTML(e.dice[1]);
@@ -760,7 +772,9 @@ function describeTurn(k) {
     } else if (e.t === "out") {
       html += line("<b>Cannot pay and has nothing to sell. Out of the game.</b>");
     } else if (e.t === "undeclare") {
-      html += line(`${pname(e.p)} is below ${money(G.target_cash)}: no longer declared.`);
+      // A caught player has already been reported on the line above.
+      if (!turn.ev.some(c => c.t === "caught" && c.p === e.p))
+        html += line(`${pname(e.p)} is below ${money(G.target_cash)}: no longer declared.`);
     } else if (e.t === "win") {
       html += line(`<b style="color:var(--gold)">${pname(e.p ?? i)} wins</b> (${e.how}).`);
     }
@@ -814,7 +828,7 @@ async function advance(animated, run) {
         }
       }
       applyEvent(st, i, e);
-      if (e.t === "route" || e.t === "buy" || e.t === "sale") { drawPlay(st); await sleep(350 / gSpeed); }
+      if (["route", "rover", "caught", "buy", "sale"].includes(e.t)) { drawPlay(st); await sleep(350 / gSpeed); }
       if (run !== gRun) return false;
     }
   }

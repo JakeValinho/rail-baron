@@ -10,7 +10,7 @@ Policy, override the method, and hand it to Game(policies=...).
     4. choose_declare    whether to head home once you have the winning cash
     5. choose_sale       which railroad to give up when you cannot pay, and how
     6. max_bid           how high to go when someone else's railroad is auctioned
-    7. (rover play)      chasing a declared player. Not in the engine yet.
+    7. choose_rover      whether to turn aside and chase a declared player
 
 The defaults below are simple, fast rules of thumb, not strong play. The
 numbers at the top of the class are the knobs they turn on.
@@ -44,6 +44,9 @@ class Policy:
     LOCK_WEIGHT = 1.0       # a city an opponent can then only reach by paying
     TOLL_WEIGHT = 0.5       # track that shortest routes are forced over
     MIN_RETURN = 1.0        # buy only if value is at least this many times the price
+
+    # ---- the rover play
+    STOP_VALUE = 50000      # what stopping someone else's win is worth, on top of the prize
 
     # ---- cash kept back
     RESERVE_TURNS = 3       # turns of bank fees to keep in hand
@@ -182,8 +185,8 @@ class Policy:
     # ------------------------------------------------------------------
     # 4. PLAYER CHOICE: declare and head home, once cash reaches the target.
     #
-    # Always declares. With no rover play in the engine there is nothing to
-    # lose except the payoff of the trip not taken.
+    # Always declares. The risk it ignores: an opponent close enough to
+    # catch the player on the way home and collect $50,000.
     # ------------------------------------------------------------------
     def choose_declare(self, game, p) -> bool:
         return True
@@ -212,6 +215,63 @@ class Policy:
             return 0
         value = self.line_value(game, p, r, self.outlook(game, p))
         return max(0, int(min(value, p.cash - self.reserve(game, p))))
+
+    # ------------------------------------------------------------------
+    # 7. PLAYER CHOICE: the rover play. Chase a declared player or not.
+    #
+    # Asked before each move while player q is declared. Catching q means
+    # moving onto or through the dot q stands on, so only this turn's roll
+    # matters: next turn q will be somewhere else.
+    #
+    # Chases when the chance of rolling far enough, times the prize plus
+    # STOP_VALUE, beats the cost of the detour in travel time. The detour is
+    # the extra dots of going by way of q, valued at STEP_VALUE each. Fees
+    # on the detour are ignored.
+    #
+    # `blocked` is the track already ridden this trip. Returns a route
+    # (dots, railroads) from where p stands, through q's dot, on to p's own
+    # destination, never using a piece of track twice. Returns None to
+    # carry on as planned.
+    # ------------------------------------------------------------------
+    def choose_rover(self, game, p, q, blocked: set):
+        t = game.tables
+        here, there = p.dots[p.step], q.dots[q.step]
+        away = t.hops[here][there]
+        if away == 0 or away > 12:
+            return None
+        ahead = p.dots[p.step + 1:p.step + 13]
+        if there in ahead:
+            return None                     # already on the way
+        chance = REACH[away]
+        if p.superchief:
+            chance = min(1.0, chance + 0.25)
+        detour = away + t.hops[there][p.goal] - (len(p.rrs) - p.step)
+        if chance * (game.rover_prize + self.STOP_VALUE) <= detour * self.STEP_VALUE:
+            return None
+
+        theirs = game.sold_mask & ~p.own_mask
+        penalty = int(game.rate * self.AVOID) // self.MOVE
+        out = search(t, here, there, ~theirs, self.STEP_VALUE, penalty, blocked)
+        if out is None or len(out[0]) - 1 > 12:
+            return None
+        owner, me = game.owner, p.index
+        first = weigh(out[1], owner, me, game.rate, self.MOVE)[1]
+        rrs = []
+        for r, (_, count) in zip(first, out[1]):
+            rrs += [r] * count
+        used = set(blocked)
+        for a, b, r in zip(out[0], out[0][1:], rrs):
+            used.add((a, b, r))
+            used.add((b, a, r))
+        if there == p.goal:
+            return out[0], tuple(rrs)
+        back = search(t, there, p.goal, ~theirs, self.STEP_VALUE, penalty, used)
+        if back is None:
+            return None                     # catching q would leave no legal way on
+        second = weigh(back[1], owner, me, game.rate, self.MOVE)[1]
+        for r, (_, count) in zip(second, back[1]):
+            rrs += [r] * count
+        return out[0] + back[0][1:], tuple(rrs)
 
     # ---------------------------------------------------- shared arithmetic
 
@@ -280,6 +340,10 @@ class Policy:
                     lock += t.mass(shut)
             share += self.LOCK_WEIGHT * lock
         return dollars * share
+
+
+# REACH[d]: chance that two dice total at least d.
+REACH = [1.0, 1.0, 1.0] + [sum(1 for a in range(1, 7) for b in range(1, 7) if a + b >= d) / 36 for d in range(3, 13)]
 
 
 def weigh(runs, owner, me, rate, move):

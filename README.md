@@ -73,7 +73,7 @@ These are all the ways a player can influence the game. Each is one method in `p
 | 4 | Declare at $200,000 | `choose_declare` | Always |
 | 5 | Forced sale: which line, bank or auction | `choose_sale` | Least valuable line, by auction |
 | 6 | Auction bid | `max_bid` | Up to the line's value, never into the reserve |
-| 7 | Rover play | not built | |
+| 7 | Rover play: chase a declared player | `choose_rover` | Chases when the chance of catching them this turn is worth the detour |
 
 To try another way of playing, subclass `Policy`, override a method or a number, and pass it in:
 
@@ -91,6 +91,5 @@ The result's `win_share_by_seat` shows how seat 1 did against the defaults.
 
 ## Not in the engine
 
-- The rover play. Nobody can catch a declared player.
 - The optional rules. A Superchief is always $40,000.
 - The roll for who goes first. Seat 1 starts.
