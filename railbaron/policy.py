@@ -130,9 +130,11 @@ class Policy:
         if found is not None:
             candidates.append(found)
         if not candidates:
-            # Boxed in by track already used this trip. The rules allow
-            # re-using track when there is no other way on.
-            candidates.append(t.shortest(src, dst))
+            # Only an interrupted homeward trip permits unavoidable reuse.
+            # The engine determines which sections may be reused, and how many.
+            if p.reusable:
+                return game._reuse_route(p, src, dst, blocked or set())
+            raise ValueError("no legal route to the destination")
 
         owner, me = game.owner, p.index
         best = best_weight = best_picks = None
@@ -294,6 +296,8 @@ class Policy:
         out = search(t, here, there, ~theirs, self.STEP_VALUE, penalty, blocked)
         if out is None or len(out[0]) - 1 > 12:
             return None
+        if p.goal in out[0][:-1]:
+            return None  # arrival ends movement before the pawn can reach q
         owner, me = game.owner, p.index
         first = weigh(out[1], owner, me, game.rate, self.MOVE)[1]
         rrs = []

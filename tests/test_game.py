@@ -699,19 +699,25 @@ def check_recording(tables, rec):
                 else:
                     assert cash[e["to"]] >= e["price"] and not out[e["to"]]
                     cash[e["to"]] -= e["price"]
+            elif kind == "declare":
+                assert cash[i] >= rec["target_cash"]
+                assert tables.city_place[city[i]] == tables.city_place[rec["players"][i]["home"]]
+                declared[i] = True
             elif kind == "fees":
                 paid = dict(e["to"])
-                assert set(paid) == {o for o in ridden if o not in (BANK, i)}       # everyone ridden on
-                assert all(a in (BANK_FEE, FEE, FEE_ALL_SOLD) and a <= FEE_ALL_SOLD for a in paid.values())
-                assert e["bank"] == (BANK_FEE if any(o in (BANK, i) for o in ridden) else 0)
-                owed = e["bank"] + sum(paid.values())
-                if cash[i] >= owed:
-                    cash[i] -= owed
-                    to_bank += e["bank"]
-                    for o, a in paid.items():
-                        cash[o] += a
-                else:
-                    bust = True
+                required = e.get("owed", e)
+                owed_to = dict(required["to"])
+                assert set(owed_to) == {o for o in ridden if o not in (BANK, i)}
+                assert all(a in (BANK_FEE, FEE, FEE_ALL_SOLD) for a in owed_to.values())
+                assert required["bank"] == (BANK_FEE if any(o in (BANK, i) for o in ridden) else 0)
+                owed = required["bank"] + sum(owed_to.values())
+                bust = cash[i] < owed
+                assert all(0 <= a <= owed_to[o] for o, a in paid.items())
+                assert sum(paid.values()) + e["bank"] == min(cash[i], owed)
+                cash[i] -= e["bank"] + sum(paid.values())
+                to_bank += e["bank"]
+                for o, a in paid.items():
+                    cash[o] += a
             elif kind == "out":
                 assert bust and i not in owner              # nothing left to sell
                 out[i] = True
@@ -725,11 +731,8 @@ def check_recording(tables, rec):
             else:
                 raise AssertionError(f"unknown event {kind}")
         assert not owed_catch                           # every pawn passed over was caught
-        if bust:
-            cash = list(turn["cash"])                   # a bankrupt player's last cash is shared out
-        else:
-            assert cash == turn["cash"]
-            assert not ridden or any(e["t"] == "fees" for e in turn["ev"])
+        assert cash == turn["cash"]
+        assert not ridden or any(e["t"] == "fees" for e in turn["ev"])
     assert rec["winner"] is not None
     return owner
 

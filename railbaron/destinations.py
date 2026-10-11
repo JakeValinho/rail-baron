@@ -231,15 +231,21 @@ class Destinations:
         return sum(p * pay[c] for c, p in enumerate(self._city_odds[region]))
 
     def expected_payoff(self, current: int, region_choice: Optional[Sequence[int]] = None) -> float:
-        """Average payoff of the next trip out of `current`."""
+        """Average payoff per destination roll, including zero-payoff lost turns."""
         pay = self.payoff[current]
         return sum(p * pay[c] for c, p in enumerate(self.destination_odds(current, region_choice)))
 
     def transition_matrix(self, region_choice: Optional[Sequence[int]] = None):
-        """numpy array T where T[a][b] is the chance that a trip from a goes to b."""
+        """State transition per destination roll; a lost twin roll leaves the city unchanged."""
         import numpy as np
 
-        return np.array([self.destination_odds(c, region_choice) for c in range(self.count)])
+        T = np.array([self.destination_odds(c, region_choice) for c in range(self.count)])
+        for a in range(self.count):
+            for b in range(self.count):
+                if a != b and self.dot[a] == self.dot[b]:
+                    T[a, a] += T[a, b]
+                    T[a, b] = 0
+        return T
 
     def long_run(self, region_choice: Optional[Sequence[int]] = None) -> tuple[list[float], float]:
         """Where a player spends the game, and what an average trip pays.
@@ -250,6 +256,9 @@ class Destinations:
         import numpy as np
 
         T = self.transition_matrix(region_choice)
+        # A lost roll is a turn spent waiting, not a completed trip.
+        np.fill_diagonal(T, 0)
+        T /= T.sum(axis=1, keepdims=True)
         visits = np.full(self.count, 1.0 / self.count)
         for _ in range(200):
             visits = visits @ T
@@ -269,20 +278,22 @@ class Destinations:
 
     def sample_trips(self, players: int, trips: int, start: Optional[int] = None,
                      region_choice: Optional[Sequence[int]] = None, seed=None):
-        """Roll `trips` destinations in a row for many players at once.
+        """Make `trips` destination rolls in a row for many players at once.
 
         Each player starts at `start` (or at a rolled home city) and every
-        new destination is rolled from the previous one. Returns two numpy
-        arrays of shape (players, trips): the cities and the payoffs.
+        new destination is rolled from the last city reached. Returns two numpy
+        arrays of shape (players, trips): rolled cities and payoffs. A same-dot
+        roll loses a turn, pays zero, and does not change the starting city.
         """
         import numpy as np
 
         rng = np.random.default_rng(seed)
         # One sorted list holds every city's odds: row a covers a..a+1, so a
         # single search finds each player's next city.
-        edges = np.cumsum(self.transition_matrix(region_choice), axis=1)
+        edges = np.cumsum([self.destination_odds(c, region_choice) for c in range(self.count)], axis=1)
         edges = (edges / edges[:, -1:] + np.arange(self.count)[:, None]).ravel()
         pay = np.array(self.payoff)
+        dots = np.array(self.dot)
         if start is None:
             here = rng.choice(self.count, size=players, p=self.destination_odds())
         else:
@@ -292,7 +303,7 @@ class Destinations:
         for t in range(trips):
             there = np.searchsorted(edges, rng.random(players) + here, side="right") - here * self.count
             cities[:, t], payoffs[:, t] = there, pay[here, there]
-            here = there
+            here = np.where(dots[here] == dots[there], here, there)
         return cities, payoffs
 
 

@@ -524,7 +524,7 @@ function shortestPath(a, b) {
 // Average payoff from city `from` if the destination lands in `region`.
 function regionValue(from, region) {
   let sum = 0, n = 0;
-  for (const c of D.city_table[region]) if (D.nodes[c] !== D.nodes[from]) { sum += D.payoff[from][c]; n++; }
+  for (const c of D.city_table[region]) { sum += D.payoff[from][c]; n++; }
   return sum / n;
 }
 function payoffLines(node) {
@@ -679,9 +679,10 @@ function applyEvent(st, i, e) {
   if (e.p != null && e.t !== "undeclare" && e.t !== "win") i = e.p;    // some events belong to another player
   const p = st.players[i];
   if (e.t === "dest") { if (!e.lost) { p.dest = e.city; p.declared = e.declared; } }
+  else if (e.t === "declare") p.declared = true;
   else if (e.t === "route" || e.t === "rover") { p.route = e.nodes; p.rrs = e.rrs; p.step = 0; }
   else if (e.t === "move") p.step = e.to;
-  else if (e.t === "arrive") { p.city = e.city; p.dest = null; p.declared = false; p.trips++; p.cash += e.pay; }
+  else if (e.t === "arrive") { p.city = e.city; p.dest = null; p.trips++; p.cash += e.pay; }
   else if (e.t === "buy") {
     p.cash -= e.price;
     if (e.item === "line") st.owner[e.rr] = i; else p[e.item] = true;
@@ -705,7 +706,9 @@ function buildStates() {
   for (const turn of G.turns) {
     st = cloneState(st);
     for (const e of turn.ev) applyEvent(st, turn.p, e);
-    turn.cash.forEach((c, i) => st.players[i].cash = c);     // the engine's figures are final
+    turn.cash.forEach((c, i) => {
+      if (st.players[i].cash !== c) throw new Error(`Replay cash mismatch for player ${i + 1}`);
+    });
     STATES.push(st);
   }
 }
@@ -759,6 +762,8 @@ function describeTurn(k) {
       if (e.lost) html += line("Already there. Loses the turn.");
       if (e.declared) html += line(`<b>Declares.</b> Heads home to ${esc(D.names[p.home])}.`,
                                    `${esc(D.names[e.city])} is the alternate destination.`);
+    } else if (e.t === "declare") {
+      html += line("Declares at home; the win is checked after this turn's fees.");
     } else if (e.t === "route") {
       const lines = [...new Set(e.rrs)].map(r => esc(DATA.railroads[r].id)).join(", ");
       const weighed = e.options && e.options.length > 1

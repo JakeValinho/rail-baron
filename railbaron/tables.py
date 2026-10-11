@@ -234,12 +234,12 @@ def search(t: Tables, src: int, dst: int, free: int, step: int, penalty: int, bl
             m = edge[0]
             choice = edge[1]
             mask = edge[4]
-            if n in touched or m in touched:
-                # Track ridden earlier this trip is closed, checked at both
-                # ends of the stretch.
-                inner = edge[3]
-                a, b = (inner[0], inner[-1]) if inner else (m, n)
-                choice = tuple([r for r in choice if (n, a, r) not in blocked and (b, m, r) not in blocked])
+            path = (n, *edge[3], m)
+            if any(dot in touched for dot in path):
+                # A compressed stretch may contain used track in its middle.
+                choice = tuple(r for r in choice if all(
+                    (a, b, r) not in blocked and (b, a, r) not in blocked
+                    for a, b in zip(path, path[1:])))
                 if not choice:
                     continue
                 mask = _bits(choice)
