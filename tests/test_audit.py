@@ -104,7 +104,7 @@ def test_policy_does_not_reuse_track_on_an_ordinary_trip(tables):
 
 
 def js_functions(*names):
-    text = Path('railbaron/map_template.html').read_text()
+    text = Path('railbaron/map_template.html').read_text(encoding='utf-8')
     pieces = []
     for name in names:
         begin = text.index('function ' + name + '(')
@@ -244,7 +244,7 @@ def test_all_216_destination_dice_match_the_python_and_js_tables(tables):
         o = outcome(black, white1, white2)
         assert tables.region_by_roll[k] == d.region_table[o]
         assert all(tables.city_by_roll[r][k] == d.city_table[r][o] for r in range(7))
-    source = Path('railbaron/map_template.html').read_text()
+    source = Path('railbaron/map_template.html').read_text(encoding='utf-8')
     js = source.split('const outcome = ', 1)[1].split(';', 1)[0]
     run_js("const assert=require('node:assert/strict');const outcome=" + js + ';' +
            'const expected=' + json.dumps([outcome(k//36+1,k//6%6+1,k%6+1) for k in range(216)]) + ';' +
@@ -272,7 +272,7 @@ def test_browser_replays_every_cash_event_without_corrections(tables):
 
 
 def test_destination_csv_cell_by_cell_against_rulebook():
-    rules = Path('Map Data/railbaron_rules_cleaned.txt').read_text()
+    rules = Path('Map Data/railbaron_rules_cleaned.txt').read_text(encoding='utf-8')
     text = rules.split('DESTINATION TABLE (BACK OF RULEBOOK)', 1)[1].split('RAILROAD PRICE CHART', 1)[0]
     labels = ['REGION', 'NORTHEAST', 'SOUTHEAST', 'NORTH CENTRAL', 'SOUTH CENTRAL', 'PLAINS', 'NORTHWEST', 'SOUTHWEST']
     parts = re.split(r'\n(' + '|'.join(labels) + r')\n', text)
@@ -288,7 +288,7 @@ def test_destination_csv_cell_by_cell_against_rulebook():
     def norm(value):
         return (value.upper().replace('.', '').replace(' ', '')
                 .replace('OKLCITY', 'OKLAHOMACITY').replace('WASHINGTONDC', 'WASHINGTON'))
-    rows = list(csv.DictReader(Path('Map Data/rail_baron_destinations.csv').open()))
+    rows = list(csv.DictReader(Path('Map Data/rail_baron_destinations.csv').open(encoding='utf-8-sig')))
     assert len(rows) == len(expected) == 176
     seen = set()
     for row in rows:
@@ -302,7 +302,7 @@ def test_destination_csv_cell_by_cell_against_rulebook():
 
 
 def test_railroad_prices_against_rulebook(tables):
-    text = Path('Map Data/railbaron_rules_cleaned.txt').read_text().split('RAILROAD PRICE CHART (BACK OF RULEBOOK)', 1)[1]
+    text = Path('Map Data/railbaron_rules_cleaned.txt').read_text(encoding='utf-8').split('RAILROAD PRICE CHART (BACK OF RULEBOOK)', 1)[1]
     expected = {code: int(price.replace(',', ''))
                 for code, price in re.findall(r'^([A-Z&]+)\s+.+?\$([\d,]+)', text, re.M)}
     assert len(expected) == len(tables.rr_ids) == 28
