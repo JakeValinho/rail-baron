@@ -15,7 +15,8 @@
     display: flex; background: var(--bg); color: var(--text);
     font: 13px/1.4 system-ui, "Segoe UI", sans-serif; overflow: hidden;
   }
-  #stage { flex: 1; min-width: 0; position: relative; }
+  #stage { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  #mapWrap { flex: 1; min-height: 0; position: relative; }
   svg { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
   svg.dragging { cursor: grabbing; }
 
@@ -151,8 +152,8 @@
   #gPlay.seg-main { flex: 1.6; color: #1b1503; background: var(--gold); font-weight: 700; }
   #gSeek { width: 100%; margin: 0; accent-color: var(--gold); flex: none; }
   #gWhen { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; margin-top: -8px; }
-  #gTurn { background: #10141a; border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; min-height: 190px; flex: none; }
-  #gScore, #gWhen { flex: none; }
+  #gTurn { background: #10141a; border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; min-height: 190px; flex: 1 0 auto; }
+  #gWhen { flex: none; }
   #gTurn .who { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
   #gTurn .rollrow { grid-template-columns: 46px auto 1fr; font-size: 12px; }
   #gTurn .pay { color: var(--gold); font-weight: 700; }
@@ -161,10 +162,14 @@
     width: 18px; height: 18px; border-radius: 50%; display: inline-grid; place-items: center; flex: none;
     font-size: 11px; font-weight: 700; color: #10141a; box-shadow: 0 0 0 1.5px #fff;
   }
-  #gScore { display: grid; gap: 4px; }
+  #gScore {
+    display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 6px; flex: none;
+    padding: 8px 10px; background: var(--panel); border-top: 1px solid var(--line); min-height: 112px; max-height: 40%; overflow-y: auto;
+  }
+  #gScore[hidden] { display: none; }
   .prow {
     display: grid; grid-template-columns: 18px 1fr auto; gap: 2px 10px; align-items: center;
-    padding: 6px 8px; border-radius: 6px; border: 1px solid transparent;
+    padding: 6px 8px; border-radius: 6px; border: 1px solid transparent; align-content: start;
   }
   .prow.turn { background: #222a35; border-color: var(--line); }
   .prow .cash { font-variant-numeric: tabular-nums; font-weight: 600; }
@@ -196,6 +201,7 @@
 </head>
 <body>
 <div id="stage">
+  <div id="mapWrap">
   <svg id="map" xmlns="http://www.w3.org/2000/svg"></svg>
   <div id="tools">
     <button id="reset">Reset view</button>
@@ -205,6 +211,8 @@
     </div>
   </div>
   <div id="hint">Scroll to zoom, drag to pan. Hover a line or city for details. Click to pin a railroad.</div>
+  </div>
+  <div id="gScore" hidden></div>
 </div>
 <aside>
   <h1>Rail Baron</h1>
@@ -258,7 +266,6 @@
     <input type="range" id="gSeek" min="0" value="0">
     <div id="gWhen"></div>
     <div id="gTurn"></div>
-    <div id="gScore"></div>
     <div class="sub" style="padding:0">This is a recording of a game played by the Python engine. Run
       <b>python -m railbaron.game</b> for a new one.</div>
   </div>
@@ -591,6 +598,7 @@ restart();
 function showPane(id) {
   document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.pane === id));
   document.querySelectorAll(".pane").forEach(p => p.hidden = p.id !== id);
+  $("gScore").hidden = id !== "paneGame";
 }
 document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => showPane(b.dataset.pane));
 // map.html#roll=5 opens on the roller and makes five rolls straight away.
@@ -849,13 +857,15 @@ function pickGame(i) {
   pauseGame();
   G = GAMES[i]; gPos = 0;
   buildStates();
-  document.querySelectorAll("#gPick button").forEach((b, j) => b.classList.toggle("on", j === i));
+  document.querySelectorAll("#gPick button").forEach(b => b.classList.toggle("on", +b.dataset.game === i));
   showGame();
 }
 const RR_INDEX = Object.fromEntries(DATA.railroads.map((r, i) => [r.id, i]));
 for (const t of trackEls) t.rr = RR_INDEX[t.lines[0].dataset.rr];
-$("gPick").innerHTML = GAMES.map(g => `<button>${g.players.length} players</button>`).join("");
-document.querySelectorAll("#gPick button").forEach((b, i) => b.onclick = () => pickGame(i));
+// Buttons run in order of player count, whichever game was recorded first.
+$("gPick").innerHTML = GAMES.map((g, i) => [g.players.length, i]).sort((a, b) => a[0] - b[0])
+  .map(([n, i]) => `<button data-game="${i}">${n} players</button>`).join("");
+document.querySelectorAll("#gPick button").forEach(b => b.onclick = () => pickGame(+b.dataset.game));
 $("gPlay").onclick = () => gPlaying ? (pauseGame(), showGame()) : playGame();
 $("gStep").onclick = () => { pauseGame(); const run = gRun; advance(true, run).then(showGame); };
 $("gBack").onclick = () => seekGame(gPos - 1);
