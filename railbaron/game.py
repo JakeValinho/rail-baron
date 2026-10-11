@@ -134,6 +134,7 @@ class Game:
         self.turn = 0                       # turns taken so far, all players together
         self.winner: Optional[int] = None
         self.declared = 0                   # how many players are declared and heading home
+        self.bought = []                    # (railroad, turn) for each purchase from the bank, in order
         self.bank_due = 0                   # fees run up by the player now moving
         self.due: dict = {}
         self.recording: Optional[dict] = None
@@ -326,6 +327,7 @@ class Game:
                 raise ValueError(f"cannot buy railroad {choice}")
             p.cash -= price
             self._transfer(choice, p.index)
+            self.bought.append((choice, self.turn))
         if ev is not None:
             item = "express" if choice == EXPRESS else "superchief" if choice == SUPERCHIEF else "line"
             ev.append({"t": "buy", "p": p.index, "item": item, "rr": choice if choice >= 0 else None, "price": price,
@@ -542,12 +544,21 @@ def _play_batch(job) -> list:
         tables = _WORKER_TABLES
     wins = [0] * players
     rounds = trips = lines = sold = out = unfinished = superchiefs = 0
+    count = tables.rr_count
+    times, order, when = [0] * count, [0] * count, [0] * count     # first purchase of each railroad
     for s in seeds:
         g = Game(players, s, tables, **options).play()
         rounds += g.rounds
         sold += tables.rr_count - g.bank_count
         out += sum(p.out for p in g.players)
         superchiefs += sum(p.superchief for p in g.players)
+        seen = 0
+        for r, turn in g.bought:
+            if not seen >> r & 1:                   # a line sold back and bought again counts once
+                times[r] += 1
+                order[r] += seen.bit_count() + 1
+                when[r] += turn // players + 1
+                seen |= 1 << r
         if g.winner is None:
             unfinished += 1
         else:
@@ -555,7 +566,7 @@ def _play_batch(job) -> list:
             wins[g.winner] += 1
             trips += w.trips
             lines += len(w.lines)
-    return [rounds, trips, lines, sold, out, unfinished, superchiefs] + wins
+    return [rounds, trips, lines, sold, out, unfinished, superchiefs] + wins + times + order + when
 
 
 def simulate(games: int, players: int = 4, seed: Optional[int] = None,
@@ -589,14 +600,39 @@ def simulate(games: int, players: int = 4, seed: Optional[int] = None,
         "seconds": seconds,
         "games_per_second": games / seconds,
         "average_rounds": rounds / games,
-        "win_share_by_seat": [w / games for w in totals[7:]],
+        "win_share_by_seat": [w / games for w in totals[7:7 + players]],
         "average_winner_trips": trips / finished,
         "average_winner_railroads": lines / finished,
         "average_railroads_sold": sold / games,
         "average_superchiefs": superchiefs / games,
         "bankruptcies_per_game": out / games,
         "unfinished": unfinished,
+        "purchases": _purchases(tables, games, totals[7 + players:]),
     }
+
+
+def _purchases(tables: Tables, games: int, columns: list) -> list[dict]:
+    """Per railroad, earliest bought first: how often, in what order and how early it is bought."""
+    n = tables.rr_count
+    times, order, when = columns[:n], columns[n:2 * n], columns[2 * n:]
+    rows = [{"railroad": tables.rr_ids[r], "name": tables.rr_name[r], "price": tables.rr_price[r],
+             "bought_share": times[r] / games,
+             "average_order": order[r] / times[r] if times[r] else None,
+             "average_round": when[r] / times[r] if times[r] else None}
+            for r in range(n)]
+    return sorted(rows, key=lambda row: (row["average_order"] is None, row["average_order"]))
+
+
+def purchase_report(summary: dict) -> str:
+    """The purchase-order table for a simulate() result."""
+    lines = [f"  {'railroad':10}{'price':>9}{'bought':>9}{'order':>8}{'round':>8}"]
+    for row in summary["purchases"]:
+        if row["average_order"] is None:
+            lines.append(f"  {row['railroad']:10}{'$' + format(row['price'], ','):>9}{'never':>9}")
+        else:
+            lines.append(f"  {row['railroad']:10}{'$' + format(row['price'], ','):>9}{row['bought_share']:>9.1%}"
+                         f"{row['average_order']:>8.1f}{row['average_round']:>8.1f}")
+    return "\n".join(lines)
 
 
 def record_games(player_counts: Sequence[int] = (3, 4, 5, 6), seed: Optional[int] = None,
@@ -625,6 +661,8 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=None, help="repeat the same dice")
     parser.add_argument("--workers", type=int, default=1,
                         help="processes to simulate with; 0 uses every processor (default 1)")
+    parser.add_argument("--purchases", action="store_true",
+                        help="with --games: also print the order in which railroads are bought")
     parser.add_argument("--choices", action="store_true", help="print the region-choice table and stop")
     parser.add_argument("--no-open", action="store_true", help="write map.html without opening it")
     args = parser.parse_args()
@@ -646,6 +684,10 @@ def main() -> None:
         print(f"  bankruptcies         {s['bankruptcies_per_game']:.3f} a game")
         print(f"  unfinished games     {s['unfinished']}")
         print("  wins by seat         " + "  ".join(f"{i + 1}: {w:.1%}" for i, w in enumerate(s["win_share_by_seat"])))
+        if args.purchases:
+            print("\nRailroads, earliest bought first. Order is 1 for the first railroad bought in a game;")
+            print("round is the round of play it was bought in. Both are averages over games where it was bought.")
+            print(purchase_report(s))
         return
 
     import webbrowser

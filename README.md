@@ -12,6 +12,7 @@ Run everything from the project folder. Setup: `pip install -r requirements.txt`
 | `python -m railbaron.game --games 5000 --workers 0` | Same, on every processor (much faster) |
 | `python -m railbaron.game --games 5000 --players 6` | 3 to 6 players (default 4) |
 | `python -m railbaron.game --games 5000 --seed 1` | Same dice every run |
+| `python -m railbaron.game --games 5000 --purchases` | Also print the order in which railroads are bought |
 | `python -m railbaron.game --choices` | Print the region-choice table |
 | `python -m railbaron.destinations` | Destination odds, average payoff, dice speed test |
 | `python examples/board_demo.py` | Sample routes, reachable dots, railroad values |

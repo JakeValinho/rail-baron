@@ -781,3 +781,14 @@ def test_record_games_covers_every_player_count(tables):
     games = record_games(seed=1, tables=tables)
     assert [len(g["players"]) for g in games] == [3, 4, 5, 6]
     assert all(g["winner"] is not None for g in games)
+
+
+def test_purchase_order_statistics_add_up(tables):
+    s = simulate(60, players=4, seed=3, tables=tables)
+    rows = s["purchases"]
+    assert len(rows) == tables.rr_count
+    bought = [r for r in rows if r["average_order"] is not None]
+    assert [r["average_order"] for r in bought] == sorted(r["average_order"] for r in bought)
+    assert all(0 < r["bought_share"] <= 1 and 1 <= r["average_order"] <= tables.rr_count for r in bought)
+    assert sum(r["bought_share"] for r in rows) == pytest.approx(s["average_railroads_sold"], abs=1.0)
+    assert simulate(60, players=4, seed=3, tables=tables, workers=2)["purchases"] == rows
