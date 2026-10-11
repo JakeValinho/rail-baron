@@ -42,6 +42,7 @@ Not in the engine, or simplified
 from __future__ import annotations
 
 import argparse
+import heapq
 import random
 import time
 from typing import Optional, Sequence, Union
@@ -66,7 +67,7 @@ DEFAULT_POLICY = Policy()
 class Player:
     __slots__ = ("index", "name", "policy", "home", "city", "destination", "trip_from", "goal",
                  "dots", "rrs", "step", "cash", "trips", "express", "superchief", "lines", "access",
-                 "own_mask", "est", "declared", "at_home", "trail", "replan", "out")
+                 "own_mask", "est", "declared", "at_home", "trail", "replan", "out", "reusable")
 
     def __init__(self, index: int, name: str, policy: Policy, cash: int):
         self.index = index
@@ -93,6 +94,7 @@ class Player:
         self.trail: Optional[list] = None   # track ridden this trip before a re-plan
         self.replan = False
         self.out = False
+        self.reusable: set = set()  # homeward track eligible for unavoidable reuse after undeclaring
 
     @property
     def dot(self) -> int:
@@ -181,6 +183,13 @@ class Game:
         declared = False
         if p.cash >= self.target_cash and p.policy.choose_declare(self, p):     # PLAYER CHOICE 4
             if t.city_place[p.city] == t.city_place[p.home]:
+                if self.bank_due or self.due:
+                    # A bonus trip can start before this turn's fees are paid.
+                    p.declared = p.at_home = True
+                    self.declared += 1
+                    if ev is not None:
+                        ev.append({"t": "declare", "p": p.index})
+                    return False
                 self.winner = p.index
                 if ev is not None:
                     ev.append({"t": "win", "how": "declared at home"})
@@ -195,6 +204,7 @@ class Game:
             return False
         p.destination, p.trip_from = city, p.city
         p.declared, p.at_home, p.trail = declared, False, None
+        p.reusable.clear()
         self.declared += declared
         goal = t.city_node[p.home] if declared else t.city_node[city]
         self._plan(p, t.city_node[p.city], goal, None, ev)
@@ -202,11 +212,64 @@ class Game:
 
     def _plan(self, p: Player, src: int, goal: int, blocked, ev) -> None:
         p.dots, p.rrs = p.policy.choose_route(self, p, src, goal, blocked)     # PLAYER CHOICE 2
+        self._validate_route(p, p.dots, p.rrs, src, goal, blocked)
         p.step, p.goal, p.replan = 0, goal, False
         if ev is not None:
             ids = self.tables.node_ids
             ev.append({"t": "route", "p": p.index, "nodes": [ids[n] for n in p.dots], "rrs": list(p.rrs),
                        "options": self.route_note})
+
+    def _validate_route(self, p, dots, rrs, src, goal, blocked) -> None:
+        """Decisions may choose any route, but cannot change movement rules."""
+        if not dots or dots[0] != src or dots[-1] != goal or len(rrs) != len(dots) - 1:
+            raise ValueError("a legal route must run from the current dot to the destination")
+        used = set(blocked or ())
+        reused = 0
+        seen = set()
+        for a, b, r in zip(dots, dots[1:], rrs):
+            if not any(edge[0] == b and r in edge[1] for edge in self.tables.adj[a]):
+                raise ValueError("a legal route must follow existing track")
+            key = (min(a, b), max(a, b), r)
+            if key in seen or (a == goal):
+                raise ValueError("a legal route cannot repeat track or pass its destination")
+            seen.add(key)
+            if (a, b, r) in used or (b, a, r) in used:
+                if key not in p.reusable:
+                    raise ValueError("a legal route cannot reuse track on this trip")
+                reused += 1
+        if reused:
+            minimum = self._reuse_route(p, src, goal, used)
+            required = sum((a, b, r) in used or (b, a, r) in used
+                           for a, b, r in zip(minimum[0], minimum[0][1:], minimum[1]))
+            if reused > required:
+                raise ValueError("a legal route cannot reuse more track than necessary")
+
+    def _reuse_route(self, p, src, goal, blocked):
+        """Minimize homeward sections reused, then dots; other used track stays closed."""
+        best, prev = {src: (0, 0)}, {}
+        heap = [(0, 0, src)]
+        while heap:
+            repeats, steps, a = heapq.heappop(heap)
+            if (repeats, steps) != best[a]:
+                continue
+            if a == goal:
+                dots, rrs = [a], []
+                while a != src:
+                    a, r = prev[a]
+                    dots.append(a)
+                    rrs.append(r)
+                return tuple(reversed(dots)), tuple(reversed(rrs))
+            for edge in self.tables.adj[a]:
+                b = edge[0]
+                for r in edge[1]:
+                    used = (a, b, r) in blocked or (b, a, r) in blocked
+                    if used and (min(a, b), max(a, b), r) not in p.reusable:
+                        continue
+                    cost = (repeats + used, steps + 1)
+                    if cost < best.get(b, (float("inf"), float("inf"))):
+                        best[b], prev[b] = cost, (a, r)
+                        heapq.heappush(heap, (*cost, b))
+        raise ValueError("no legal route to the destination")
 
     def _ridden(self, p: Player):
         """Track ridden so far this trip: (the list, the same as a blocked set)."""
@@ -234,6 +297,7 @@ class Game:
                 dots, rrs = route
                 if dots[0] != p.dots[p.step] or dots[-1] != p.goal or len(rrs) != len(dots) - 1:
                     raise ValueError("a rover route must run from where the player is to their destination")
+                self._validate_route(p, dots, rrs, dots[0], p.goal, blocked)
                 p.trail, p.dots, p.rrs, p.step, p.replan = trail, dots, rrs, 0, False
                 if ev is not None:
                     ids = self.tables.node_ids
@@ -252,41 +316,39 @@ class Game:
     # ----------------------------------------------------------- movement
 
     def _move(self, p: Player, count: int, ev, dice) -> None:
-        if self.declared:
+        if self.declared and not p.declared:
             self._rover(p, ev)
         if p.replan and p.step < len(p.rrs):
             self._replan(p, ev)
         start, last = p.step, len(p.rrs)
         to = min(start + count, last)
 
-        # Note who is owed for the track ridden. Paid at the end of the turn.
-        owner, me, rate, due, est = self.owner, p.index, self.rate, self.due, p.est
-        for r in p.rrs[start:to]:
-            o = owner[r]
-            fee = rate
+        if ev is not None:
+            ev.append({"t": "move", "dice": dice, "bonus": len(dice) == 1, "from": start, "to": to})
+        # Charge and catch in travel order. A caught pawn can immediately
+        # arrive at its alternate and buy track before our next step.
+        for k in range(start, to):
+            r = p.rrs[k]
+            o, fee = self.owner[r], self.rate
+            est = p.est
             if est is not None:
                 old = est.get(r)
                 if old is None:
-                    est = p.est = None          # left the line: the old fee is gone
+                    p.est = None
                 else:
-                    if len(est) > 1:
-                        est = p.est = {r: old}
+                    p.est = {r: old}
                     fee = old
-            if o < 0 or o == me:
+            if o < 0 or o == p.index:
                 self.bank_due = BANK_FEE
-            elif due.get(o, 0) < fee:
-                due[o] = fee
-
-        p.step = to
-        if ev is not None:
-            ev.append({"t": "move", "dice": dice, "bonus": len(dice) == 1, "from": start, "to": to})
-        if self.declared:
-            # The rover play: only the first pawn to reach a declared player
-            # collects, because being caught ends the declaration.
-            passed = p.dots[start + 1:to + 1]
-            for q in self.players:
-                if q.declared and q is not p and q.dots[q.step] in passed:
-                    self._catch(p, q, ev)
+            elif self.due.get(o, 0) < fee:
+                self.due[o] = fee
+            a, b = p.dots[k:k + 2]
+            p.reusable.discard((min(a, b), max(a, b), r))
+            p.step = k + 1
+            if self.declared:
+                for q in self.players:
+                    if q.declared and q is not p and q.dot == b:
+                        self._catch(p, q, ev)
         if to == last:
             self._arrive(p, ev)
 
@@ -321,6 +383,8 @@ class Game:
             p.superchief = True
             price = self.superchief_price
         else:
+            if not isinstance(choice, int) or not 0 <= choice < t.rr_count:
+                raise ValueError(f"cannot buy railroad {choice}")
             price = t.rr_price[choice]
             if self.owner[choice] != BANK or p.cash < price:
                 raise ValueError(f"cannot buy railroad {choice}")
@@ -366,7 +430,7 @@ class Game:
                 if r in t.node_rrs[q.dots[q.step]]:
                     if q.est is None:
                         q.est = {}
-                    q.est.setdefault(r, BANK_FEE)
+                    q.est[r] = BANK_FEE  # a bank resale starts from the current $1,000 fee
                 if q.destination >= 0 and q.policy.REPLAN and r in q.rrs[q.step:]:
                     q.replan = True         # their planned route just got dearer
 
@@ -433,17 +497,22 @@ class Game:
         if owed:
             if p.cash < owed:
                 self._raise_cash(p, owed, ev)
-            if ev is not None:
-                ev.append({"t": "fees", "bank": self.bank_due, "to": sorted(due.items())})
             if p.cash >= owed:
+                if ev is not None:
+                    ev.append({"t": "fees", "bank": self.bank_due, "to": sorted(due.items())})
                 p.cash -= owed
                 for o, amount in due.items():
                     players[o].cash += amount
             else:
+                payments = []
                 for o, amount in sorted(due.items()):       # bankrupt: pay out what there is
                     paid = min(amount, p.cash)
+                    payments.append((o, paid))
                     players[o].cash += paid
                     p.cash -= paid
+                if ev is not None:
+                    ev.append({"t": "fees", "bank": min(self.bank_due, p.cash), "to": payments,
+                               "owed": {"bank": self.bank_due, "to": sorted(due.items())}})
                 p.cash = 0
                 p.out = True
                 self.declared -= p.declared
@@ -474,6 +543,8 @@ class Game:
     def _undeclare(self, p: Player, ev) -> None:
         """No longer declared: carry on to the alternate destination, as
         part of the same trip."""
+        trail, _ = self._ridden(p)
+        p.reusable = {(min(a, b), max(a, b), r) for a, b, r in trail}
         p.declared = p.at_home = False
         self.declared -= 1
         if ev is not None:

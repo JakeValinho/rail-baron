@@ -1,9 +1,9 @@
 """The Rail Baron board as a NetworkX graph.
 
 This module knows the map and nothing else: dots, track, railroads, cities.
-Turn order, money, dice and AI decisions belong in the game engine, which
-asks this module questions such as "how far is it", "what does this route
-cost me" and "where can I end up with this roll".
+Turn order, money, dice and AI decisions belong in the game engine. Tables
+builds the engine's integer map from this module; the name-based route,
+fee and movement helpers here are for analysis.
 
 Vocabulary
 ----------
@@ -377,7 +377,8 @@ class Board:
         it early. No track may be ridden twice in one trip: pass the tracks
         already ridden on earlier turns of this trip as `used_tracks`
         (Route.tracks gives them). Moves that would dead-end before the roll
-        is used up are not legal and are left out.
+        is used up are not legal and are left out. When a destination is
+        provided, moves that leave no unused route to it are also excluded.
 
         The list grows very fast with the roll: about 4,000 moves for a 7
         out of Chicago and 670,000 for a 12. Use reachable() when the end
@@ -391,7 +392,8 @@ class Board:
 
         def walk(u: str, left: int) -> None:
             if left == 0 or (u == dst and rrs):
-                moves.append(Route(tuple(nodes), tuple(rrs)))
+                if dst is None or u == dst or self._can_finish(u, dst, used):
+                    moves.append(Route(tuple(nodes), tuple(rrs)))
                 return
             for v, data in self.simple[u].items():
                 for rr in data["railroads"]:
@@ -457,7 +459,8 @@ class Board:
 
         def walk(u: str, left: int) -> None:
             if left == 0 or (u == dst and rrs):
-                ends.setdefault(u, Route(tuple(nodes), tuple(rrs)))
+                if dst is None or u == dst or self._can_finish(u, dst, used):
+                    ends.setdefault(u, Route(tuple(nodes), tuple(rrs)))
                 return
             # Stop if every dot this branch could still reach is already found.
             if hope(u, nodes[-2] if rrs else None, left) <= ends.keys():
@@ -465,7 +468,8 @@ class Board:
             # Only used track close enough to ride again can change what
             # happens from here. Two arrivals that agree on it are the same.
             near = dist[u]
-            state = (u, left, frozenset(t for t in used if near[t[0]] < left or near[t[1]] < left))
+            state = (u, left, frozenset(used) if dst is not None else
+                     frozenset(t for t in used if near[t[0]] < left or near[t[1]] < left))
             if state in seen:
                 return
             seen.add(state)
@@ -486,6 +490,18 @@ class Board:
         if roll > 0:
             walk(src, roll)
         return ends
+
+    def _can_finish(self, start: str, destination: str, used: set) -> bool:
+        """Reach the destination without using any section already ridden."""
+        seen, todo = {start}, [start]
+        for a in todo:
+            for b, data in self.simple[a].items():
+                if b not in seen and any(track_key(a, b, rr) not in used for rr in data["railroads"]):
+                    if b == destination:
+                        return True
+                    seen.add(b)
+                    todo.append(b)
+        return start == destination
 
     # ------------------------------------------------------ railroad values
 

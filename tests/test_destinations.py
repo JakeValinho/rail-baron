@@ -91,4 +91,5 @@ def test_batches_match_exact_odds(dest):
     assert cities.shape == payoffs.shape == (20_000, 30)
     assert payoffs[0, 1] == dest.payoff[cities[0, 0]][cities[0, 1]]
     _, per_trip = dest.long_run()
-    assert payoffs[:, 10:].mean() == pytest.approx(per_trip, rel=0.01)
+    completed = payoffs[:, 10:]
+    assert completed[completed > 0].mean() == pytest.approx(per_trip, rel=0.01)
