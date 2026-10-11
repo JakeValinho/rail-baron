@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rail Baron map</title>
+<style>
+  :root {
+    --bg: #12161c; --panel: #1a2029; --line: #2b3441; --text: #e6e9ee;
+    --muted: #8f9bab; --dot: #d3d9e2; --city: #f4f1e6; --halo: #12161c; --gold: #f2c14e;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: flex; background: var(--bg); color: var(--text);
+    font: 13px/1.4 system-ui, "Segoe UI", sans-serif; overflow: hidden;
+  }
+  #stage { flex: 1; min-width: 0; position: relative; }
+  svg { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+  svg.dragging { cursor: grabbing; }
+
+  .track { stroke-width: 2.6; stroke-linecap: round; fill: none; transition: opacity .12s; }
+  .hit { stroke: transparent; stroke-width: 9; stroke-linecap: round; fill: none; cursor: pointer; }
+  .dot { fill: var(--dot); stroke: var(--bg); stroke-width: .7; transition: opacity .12s; }
+  .city { fill: var(--city); stroke: var(--bg); stroke-width: 1.2; cursor: pointer; transition: opacity .12s; }
+  .label {
+    fill: var(--text); font-size: 11px; font-weight: 600; pointer-events: none;
+    paint-order: stroke; stroke: var(--halo); stroke-width: 3.2px; stroke-linejoin: round;
+    transition: opacity .12s;
+  }
+  svg.focus .track:not(.on) { opacity: .1; }
+  svg.focus .track.on { stroke-width: 4; }
+  svg.focus .dot { opacity: .25; }
+  svg.focus .route { opacity: .3; }
+  svg.focus .city:not(.on), svg.focus .label:not(.on) { opacity: .25; }
+
+  #hint { position: absolute; left: 14px; bottom: 12px; color: var(--muted); font-size: 12px; pointer-events: none; }
+  #tools { position: absolute; left: 14px; top: 12px; display: flex; gap: 10px; flex-wrap: wrap; }
+  #layout { display: flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  #layout button {
+    background: var(--panel); color: var(--muted); border: 0; padding: 5px 12px; font: inherit; cursor: pointer;
+  }
+  #layout button + button { border-left: 1px solid var(--line); }
+  #layout button.on { background: var(--text); color: var(--bg); font-weight: 600; }
+  #gLabels { transition: opacity .2s; }
+  #reset {
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; font: inherit; cursor: pointer;
+  }
+  #reset:hover { border-color: var(--muted); }
+  #tip {
+    position: fixed; pointer-events: none; background: #0b0e12; border: 1px solid var(--line);
+    border-radius: 6px; padding: 7px 10px; max-width: 260px; font-size: 12px; z-index: 5;
+    box-shadow: 0 4px 14px rgba(0,0,0,.45);
+  }
+  #tip b { font-size: 13px; }
+  #tip .sub { color: var(--muted); }
+
+  aside {
+    width: 300px; flex: none; background: var(--panel); border-left: 1px solid var(--line);
+    display: flex; flex-direction: column; min-height: 0;
+  }
+  aside h1 { font-size: 15px; margin: 0; padding: 14px 16px 2px; }
+  aside .sub { color: var(--muted); padding: 0 16px 10px; font-size: 12px; }
+  #sort { display: flex; gap: 6px; padding: 0 16px 10px; }
+  #sort button {
+    flex: 1; background: none; color: var(--muted); border: 1px solid var(--line);
+    border-radius: 5px; padding: 3px 0; font: inherit; font-size: 12px; cursor: pointer;
+  }
+  #sort button.on { color: var(--text); border-color: var(--muted); }
+  #list { overflow-y: auto; flex: 1; border-top: 1px solid var(--line); }
+  .row {
+    display: grid; grid-template-columns: 14px 1fr auto; gap: 9px; align-items: center;
+    padding: 5px 16px; cursor: pointer; border-left: 3px solid transparent;
+  }
+  .row:hover { background: #222a35; }
+  .row.pinned { background: #263040; border-left-color: var(--text); }
+  .swatch { width: 14px; height: 4px; border-radius: 2px; }
+  .row .nm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row .nm span { color: var(--muted); margin-left: 5px; font-size: 12px; }
+  .row .val { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 12px; }
+  #detail { border-top: 1px solid var(--line); padding: 12px 16px 14px; min-height: 150px; }
+  #detail h2 { font-size: 14px; margin: 0 0 6px; display: flex; align-items: center; gap: 8px; }
+  #detail dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 0 0 8px; }
+  #detail dt { color: var(--muted); }
+  #detail dd { margin: 0; font-variant-numeric: tabular-nums; }
+  #detail p { margin: 0; color: var(--muted); font-size: 12px; }
+
+  #tabs { display: flex; gap: 6px; padding: 0 16px 12px; }
+  #tabs button {
+    flex: 1; background: none; color: var(--muted); border: 1px solid var(--line);
+    border-radius: 6px; padding: 6px 0; font: inherit; font-weight: 600; cursor: pointer;
+  }
+  #tabs button.on { color: var(--bg); background: var(--text); border-color: var(--text); }
+  .pane { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .pane[hidden] { display: none; }
+  #paneDest { overflow-y: auto; padding: 12px 16px 16px; border-top: 1px solid var(--line); gap: 12px; }
+  #where { color: var(--muted); }
+  #where b { color: var(--text); }
+  .btn {
+    background: var(--gold); color: #1b1503; border: 0; border-radius: 6px; padding: 9px 0;
+    font: inherit; font-weight: 700; cursor: pointer; width: 100%; flex: none;
+  }
+  .btn:disabled { opacity: .45; cursor: default; }
+  .btn.quiet { background: none; color: var(--muted); border: 1px solid var(--line); font-weight: 500; padding: 5px 0; }
+  .rollrow { display: grid; grid-template-columns: 46px auto 1fr; gap: 10px; align-items: center; min-height: 40px; }
+  .rollrow .lbl { color: var(--muted); }
+  .dice { display: flex; gap: 5px; }
+  .die {
+    width: 32px; height: 32px; border-radius: 6px; background: #f4f1e6; padding: 5px;
+    display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); gap: 1px;
+  }
+  .die i { border-radius: 50%; }
+  .die i.p { background: #1b1f26; }
+  .die.black { background: #05070a; box-shadow: inset 0 0 0 1px #5d6978; }
+  .die.black i.p { background: #f4f1e6; }
+  .die.blank { background: none; box-shadow: inset 0 0 0 1px var(--line); }
+  #picker { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  #picker[hidden] { display: none; }
+  #picker p { grid-column: 1 / -1; margin: 0; }
+  #picker button {
+    background: #222a35; color: var(--text); border: 1px solid var(--line); border-radius: 6px;
+    padding: 6px 8px; font: inherit; cursor: pointer; text-align: left;
+  }
+  #picker button:hover { border-color: var(--gold); }
+  #picker button span { display: block; color: var(--muted); font-size: 11px; }
+  #picker button.best { border-color: var(--gold); }
+  #result { background: #10141a; border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; min-height: 62px; }
+  #result .big { font-size: 15px; font-weight: 700; }
+  #result .pay { color: var(--gold); font-weight: 700; }
+  #result .sub { padding: 0; }
+  #totals { display: flex; justify-content: space-between; color: var(--muted); }
+  #totals b { color: var(--text); font-variant-numeric: tabular-nums; }
+  #log { font-size: 12px; color: var(--muted); display: grid; gap: 3px; }
+  #log div { display: flex; justify-content: space-between; gap: 8px; }
+  #log div span:last-child { font-variant-numeric: tabular-nums; color: var(--text); }
+  .route { fill: none; stroke: #fff; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; opacity: .85; pointer-events: none; }
+  .ring { fill: none; stroke-width: 2.6; pointer-events: none; }
+  .ring.from { stroke: var(--muted); }
+  .ring.to { stroke: var(--gold); animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 50% { stroke-opacity: .25; } }
+
+  @media (max-width: 760px) {
+    body { flex-direction: column; }
+    aside { width: 100%; height: 45%; border-left: 0; border-top: 1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <svg id="map" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div id="tools">
+    <button id="reset">Reset view</button>
+    <div id="layout">
+      <button data-layout="geo" class="on">Geographic</button>
+      <button data-layout="even">Even spacing</button>
+    </div>
+  </div>
+  <div id="hint">Scroll to zoom, drag to pan. Hover a line or city for details. Click to pin a railroad.</div>
+</div>
+<aside>
+  <h1>Rail Baron</h1>
+  <div class="sub" id="counts"></div>
+  <div id="tabs">
+    <button data-pane="paneRR" class="on">Railroads</button>
+    <button data-pane="paneDest">Destinations</button>
+  </div>
+  <div class="pane" id="paneRR">
+  <div id="sort">
+    <button data-key="price" class="on">Price</button>
+    <button data-key="coverage">Coverage</button>
+    <button data-key="traffic_share">Traffic</button>
+    <button data-key="id">Name</button>
+  </div>
+  <div id="list"></div>
+  <div id="detail"></div>
+  </div>
+  <div class="pane" id="paneDest" hidden>
+    <div id="where"></div>
+    <button class="btn" id="roll">Roll destination</button>
+    <div>
+      <div class="rollrow"><span class="lbl">Region</span><span class="dice" id="dice1"></span><span id="res1"></span></div>
+      <div class="rollrow"><span class="lbl">City</span><span class="dice" id="dice2"></span><span id="res2"></span></div>
+    </div>
+    <div id="picker" hidden></div>
+    <div id="result"></div>
+    <div id="totals"></div>
+    <div id="log"></div>
+    <button class="btn quiet" id="restart">Start over</button>
+  </div>
+</aside>
+<div id="tip" hidden></div>
+
+<script>
+const DATA = __DATA__;
+const SCALE = 2.2;            // board units to drawing units
+const GAP = 3.4;              // spacing between parallel tracks
+const NS = "http://www.w3.org/2000/svg";
+const svg = document.getElementById("map");
+const tip = document.getElementById("tip");
+const RR = Object.fromEntries(DATA.railroads.map(r => [r.id, r]));
+const P = {};
+for (const [id, n] of Object.entries(DATA.nodes)) P[id] = { x: n.x * SCALE, y: n.y * SCALE };
+const cityAt = Object.fromEntries(DATA.cities.map(c => [c.node, c]));
+const REGION = { NE: "Northeast", SE: "Southeast", NC: "North Central", SC: "South Central",
+                 PL: "Plains", NW: "Northwest", SW: "Southwest" };
+
+const el = (name, attrs, parent) => {
+  const e = document.createElementNS(NS, name);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+};
+const pct = v => (v * 100).toFixed(1) + "%";
+const money = v => "$" + v.toLocaleString("en-US");
+const esc = s => s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+
+// ---------------------------------------------------------------- drawing
+const gTracks = el("g", {}, svg), gOverlay = el("g", {}, svg), gHits = el("g", {}, svg);
+const gDots = el("g", {}, svg), gRings = el("g", {}, svg), gLabels = el("g", { id: "gLabels" }, svg);
+
+// Two ways to lay the board out. P holds wherever the dots are right now.
+const EVEN_SCALE = 27;        // drawing units per piece of track in the even layout
+const LAYOUTS = { geo: {}, even: {} };
+for (const [id, n] of Object.entries(DATA.nodes)) {
+  LAYOUTS.geo[id] = { x: n.x * SCALE, y: n.y * SCALE };
+  LAYOUTS.even[id] = { x: n.ex * EVEN_SCALE, y: n.ey * EVEN_SCALE };
+}
+
+const CITY_R = 4.4;
+const trackEls = [], dotEls = [];
+for (const seg of DATA.segments) seg.railroads.forEach((rr, i) => trackEls.push({
+  seg,
+  // Parallel railroads are drawn side by side so each stays visible.
+  off: (i - (seg.railroads.length - 1) / 2) * GAP,
+  lines: [el("line", { class: "track", stroke: RR[rr].color, "data-rr": rr }, gTracks),
+          el("line", { class: "hit", "data-rr": rr }, gHits)],
+}));
+for (const id of Object.keys(P))
+  if (!cityAt[id]) dotEls.push({ id, node: el("circle", { r: 2.1, class: "dot" }, gDots) });
+for (const c of DATA.cities)
+  dotEls.push({ id: c.node, node: el("circle", { r: CITY_R, class: "city", "data-city": c.name }, gDots) });
+
+function updateGeometry() {
+  for (const t of trackEls) {
+    const a = P[t.seg.a], b = P[t.seg.b];
+    const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
+    const ox = -dy / len * t.off, oy = dx / len * t.off;
+    for (const line of t.lines) {
+      line.setAttribute("x1", a.x + ox); line.setAttribute("y1", a.y + oy);
+      line.setAttribute("x2", b.x + ox); line.setAttribute("y2", b.y + oy);
+    }
+  }
+  for (const d of dotEls) { d.node.setAttribute("cx", P[d.id].x); d.node.setAttribute("cy", P[d.id].y); }
+}
+
+// Place each label where it overlaps other labels, cities and track least.
+function placeLabels() {
+  gLabels.innerHTML = "";
+  const FS = 11, H = FS * 1.05, pad = CITY_R + 2.5;
+  const boxes = DATA.cities.map(c => {
+    const p = P[c.node];
+    return { x: p.x - CITY_R, y: p.y - CITY_R, w: 2 * CITY_R, h: 2 * CITY_R };
+  });
+  const trackPts = [];
+  for (const seg of DATA.segments) {
+    const a = P[seg.a], b = P[seg.b];
+    for (let t = 0; t <= 1; t += 0.25) trackPts.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+  }
+  const overlap = (p, q) => Math.max(0, Math.min(p.x + p.w, q.x + q.w) - Math.max(p.x, q.x)) *
+                            Math.max(0, Math.min(p.y + p.h, q.y + q.h) - Math.max(p.y, q.y));
+  for (const c of DATA.cities) {
+    const p = P[c.node], w = c.name.length * FS * 0.56;
+    const spots = [
+      { x: p.x + pad, y: p.y - H / 2, anchor: "start" },
+      { x: p.x - pad - w, y: p.y - H / 2, anchor: "end" },
+      { x: p.x - w / 2, y: p.y - pad - H, anchor: "middle" },
+      { x: p.x - w / 2, y: p.y + pad, anchor: "middle" },
+      { x: p.x + pad * 0.7, y: p.y - pad * 0.7 - H, anchor: "start" },
+      { x: p.x + pad * 0.7, y: p.y + pad * 0.7, anchor: "start" },
+      { x: p.x - pad * 0.7 - w, y: p.y - pad * 0.7 - H, anchor: "end" },
+      { x: p.x - pad * 0.7 - w, y: p.y + pad * 0.7, anchor: "end" },
+    ];
+    let best = null;
+    spots.forEach((s, i) => {
+      const box = { x: s.x, y: s.y, w, h: H };
+      let score = i * 2;
+      for (const b of boxes) score += overlap(box, b) * 4;
+      for (const t of trackPts)
+        if (t.x > box.x && t.x < box.x + w && t.y > box.y && t.y < box.y + H) score += 14;
+      if (!best || score < best.score) best = { score, box, s };
+    });
+    boxes.push(best.box);
+    const tx = best.s.anchor === "start" ? best.box.x : best.s.anchor === "end" ? best.box.x + w : best.box.x + w / 2;
+    el("text", { x: tx, y: best.box.y + H * 0.8, class: "label", "text-anchor": best.s.anchor,
+                 "data-city": c.name }, gLabels).textContent = c.name;
+  }
+}
+updateGeometry();
+placeLabels();
+
+// ------------------------------------------------------------ pan and zoom
+const M = 70, SIDE = 130;  // room for labels that hang off the edges
+function homeFor(pos) {
+  const xs = Object.values(pos).map(p => p.x), ys = Object.values(pos).map(p => p.y);
+  return { x: Math.min(...xs) - SIDE, y: Math.min(...ys) - M * 0.6,
+           w: Math.max(...xs) - Math.min(...xs) + 2 * SIDE, h: Math.max(...ys) - Math.min(...ys) + 1.2 * M };
+}
+let HOME = homeFor(P);
+let view = { ...HOME };
+const applyView = () => svg.setAttribute("viewBox", `${view.x} ${view.y} ${view.w} ${view.h}`);
+applyView();
+const toBoard = e => {
+  const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(svg.getScreenCTM().inverse());
+  return { x: pt.x, y: pt.y };
+};
+svg.addEventListener("wheel", e => {
+  e.preventDefault();
+  const f = Math.exp(e.deltaY * 0.0015), w = Math.min(HOME.w * 1.5, Math.max(HOME.w / 14, view.w * f));
+  const k = w / view.w, p = toBoard(e);
+  view = { x: p.x - (p.x - view.x) * k, y: p.y - (p.y - view.y) * k, w, h: view.h * k };
+  applyView();
+}, { passive: false });
+let drag = null, moved = false;
+svg.addEventListener("pointerdown", e => { drag = toBoard(e); moved = false; svg.setPointerCapture(e.pointerId); });
+svg.addEventListener("pointermove", e => {
+  if (!drag) return;
+  const p = toBoard(e);
+  if (Math.hypot(p.x - drag.x, p.y - drag.y) * svg.clientWidth / view.w > 3) moved = true;
+  if (!moved) return;
+  svg.classList.add("dragging");
+  view.x += drag.x - p.x; view.y += drag.y - p.y;
+  applyView();
+});
+svg.addEventListener("pointerup", () => { drag = null; svg.classList.remove("dragging"); });
+document.getElementById("reset").onclick = () => { view = { ...HOME }; applyView(); };
+
+// -------------------------------------------------------------- highlight
+let pinned = null, hoverRR = null;
+const detail = document.getElementById("detail");
+function focus(rr) {
+  svg.classList.toggle("focus", !!rr);
+  svg.querySelectorAll(".on").forEach(e => e.classList.remove("on"));
+  if (rr) {
+    svg.querySelectorAll(`.track[data-rr="${CSS.escape(rr)}"]`).forEach(e => e.classList.add("on"));
+    const served = new Set(RR[rr].cities);
+    svg.querySelectorAll("[data-city]").forEach(e => served.has(e.dataset.city) && e.classList.add("on"));
+  }
+  showDetail(rr);
+}
+function showDetail(rr) {
+  if (!rr) {
+    detail.innerHTML = "<p>Hover a railroad to see what it serves. Click one to keep it highlighted.</p>";
+    return;
+  }
+  const r = RR[rr];
+  detail.innerHTML =
+    `<h2><span class="swatch" style="background:${r.color}"></span>${esc(r.name)}</h2>
+     <dl><dt>Price</dt><dd>${money(r.price)}</dd>
+         <dt>Track</dt><dd>${r.track} dots</dd>
+         <dt>Coverage</dt><dd>${pct(r.coverage)} of destinations</dd>
+         <dt>Traffic</dt><dd>${pct(r.traffic_share)} of all travel</dd></dl>
+     <p>${r.cities.map(esc).join(", ")}</p>`;
+}
+function pin(rr) {
+  pinned = pinned === rr ? null : rr;
+  document.querySelectorAll(".row").forEach(e => e.classList.toggle("pinned", e.dataset.rr === pinned));
+  focus(pinned);
+}
+
+// ---------------------------------------------------------------- sidebar
+const list = document.getElementById("list");
+document.getElementById("counts").textContent =
+  `${DATA.railroads.length} railroads, ${DATA.cities.length} cities, ${Object.keys(P).length} dots`;
+function drawList(key) {
+  const rows = [...DATA.railroads].sort((a, b) =>
+    key === "id" ? a.id.localeCompare(b.id) : b[key] - a[key]);
+  list.innerHTML = "";
+  for (const r of rows) {
+    const row = document.createElement("div");
+    row.className = "row" + (r.id === pinned ? " pinned" : "");
+    row.dataset.rr = r.id;
+    const val = key === "coverage" || key === "traffic_share" ? pct(r[key]) : money(r.price);
+    row.innerHTML = `<span class="swatch" style="background:${r.color}"></span>
+      <span class="nm">${esc(r.id)}<span>${esc(r.name)}</span></span><span class="val">${val}</span>`;
+    row.onmouseenter = () => focus(r.id);
+    row.onmouseleave = () => focus(pinned);
+    row.onclick = () => pin(r.id);
+    list.appendChild(row);
+  }
+}
+document.querySelectorAll("#sort button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("#sort button").forEach(x => x.classList.toggle("on", x === b));
+  drawList(b.dataset.key);
+});
+drawList("price");
+showDetail(null);
+// map.html#UP opens with that railroad highlighted. Join several with "&".
+const LINKS = decodeURIComponent(location.hash.slice(1)).split("&");
+for (const link of LINKS) if (RR[link]) pin(link);
+
+// ------------------------------------------------------ destination roller
+// Same tables and same dice-to-outcome rule as railbaron/destinations.py.
+const D = DATA.destinations;
+const outcome = (black, w1, w2) => (black % 2 === 0 ? 36 : 0) + (w1 - 1) * 6 + (w2 - 1);
+const d6 = () => 1 + Math.floor(Math.random() * 6);
+const throwDice = () => [d6(), d6(), d6()];        // black, white, white
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const $ = id => document.getElementById(id);
+const PIPS = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
+const dieHTML = (face, black) => `<span class="die${black ? " black" : ""}${face ? "" : " blank"}">` +
+  Array.from({ length: 9 }, (_, i) => `<i class="${face && PIPS[face].includes(i) ? "p" : ""}"></i>`).join("") + "</span>";
+const showDice = (box, f) => { box.innerHTML = dieHTML(f[0], true) + dieHTML(f[1]) + dieHTML(f[2]); };
+const readDice = f => `${f[0] % 2 ? "odd" : "even"} ${f[1] + f[2]}`;
+
+const NEXT = {};
+for (const s of DATA.segments) { (NEXT[s.a] ||= []).push(s.b); (NEXT[s.b] ||= []).push(s.a); }
+function shortestPath(a, b) {
+  const prev = { [a]: null }, queue = [a];
+  for (let i = 0; i < queue.length && !(b in prev); i++)
+    for (const v of NEXT[queue[i]]) if (!(v in prev)) { prev[v] = queue[i]; queue.push(v); }
+  const path = [];
+  for (let n = b; n != null; n = prev[n]) path.unshift(n);
+  return path;
+}
+// Average payoff from city `from` if the destination lands in `region`.
+function regionValue(from, region) {
+  let sum = 0, n = 0;
+  for (const c of D.city_table[region]) if (D.nodes[c] !== D.nodes[from]) { sum += D.payoff[from][c]; n++; }
+  return sum / n;
+}
+function payoffLines(node) {
+  if (game.here == null || D.nodes[game.here] === node) return "";
+  return D.names.map((name, c) => D.nodes[c] === node
+    ? `<div>${esc(name)} pays ${money(D.payoff[game.here][c])} from ${esc(D.names[game.here])}</div>` : "").join("");
+}
+
+const game = { here: null, from: null, trips: 0, total: 0, busy: false, log: [] };
+async function animate(box, final, on) {
+  if (on) for (let i = 0; i < 7; i++) { showDice(box, throwDice()); await sleep(55); }
+  showDice(box, final);
+}
+function chooseRegion(rolled) {
+  const picker = $("picker"), best = D.richest[game.here];
+  picker.innerHTML = `<p>You rolled your own region, ${REGION[D.regions[rolled]]}. Choose any region.</p>` +
+    D.regions.map((code, r) => `<button data-r="${r}" class="${r === best ? "best" : ""}">${REGION[code]}
+      <span>average ${money(Math.round(regionValue(game.here, r)))}</span></button>`).join("");
+  picker.hidden = false;
+  return new Promise(done => picker.querySelectorAll("button").forEach(b => b.onclick = () => {
+    picker.hidden = true; done(+b.dataset.r);
+  }));
+}
+// pick: chooses the region when the player's own region is rolled.
+async function rollDestination(animated = true, pick = chooseRegion) {
+  if (game.busy) return;
+  game.busy = true; $("roll").disabled = true;
+  $("res1").textContent = $("res2").textContent = ""; showDice($("dice2"), [0, 0, 0]);
+
+  let dice = throwDice();
+  await animate($("dice1"), dice, animated);
+  let region = D.region_table[outcome(...dice)];
+  $("res1").textContent = `${readDice(dice)}: ${REGION[D.regions[region]]}`;
+  if (game.here != null && region === D.region[game.here]) {
+    region = await pick(region);
+    $("res1").textContent += region === D.region[game.here] ? ", kept" : `, chose ${REGION[D.regions[region]]}`;
+  }
+
+  let city;
+  for (;;) {
+    dice = throwDice();
+    await animate($("dice2"), dice, animated);
+    city = D.city_table[region][outcome(...dice)];
+    if (game.here == null || D.nodes[city] !== D.nodes[game.here]) break;
+    $("res2").textContent = `${readDice(dice)}: ${D.names[city]}, already there, rolling again`;
+    if (animated) await sleep(600);
+  }
+  $("res2").textContent = `${readDice(dice)}: ${D.names[city]}`;
+
+  if (game.here == null) {
+    $("result").innerHTML = `<div class="big">Home city: ${esc(D.names[city])}</div><div class="sub">Roll again for a first destination.</div>`;
+  } else {
+    const pay = D.payoff[game.here][city], dots = shortestPath(D.nodes[game.here], D.nodes[city]).length - 1;
+    game.trips++; game.total += pay;
+    game.log.unshift([`${D.names[game.here]} to ${D.names[city]}`, pay]);
+    $("result").innerHTML = `<div class="big">${esc(D.names[game.here])} to ${esc(D.names[city])}</div>
+      <div>Pays <span class="pay">${money(pay)}</span>, ${dots} dots by the shortest route</div>`;
+  }
+  game.from = game.here; game.here = city;
+  drawGame();
+  game.busy = false; $("roll").disabled = false;
+}
+function drawGame() {
+  gOverlay.innerHTML = gRings.innerHTML = "";
+  const ring = (c, cls) => { const p = P[D.nodes[c]]; el("circle", { cx: p.x, cy: p.y, r: CITY_R + 4.5, class: "ring " + cls }, gRings); };
+  if (game.from != null) {
+    const pts = shortestPath(D.nodes[game.from], D.nodes[game.here]).map(n => `${P[n].x},${P[n].y}`).join(" ");
+    el("polyline", { points: pts, class: "route" }, gOverlay);
+    ring(game.from, "from");
+  }
+  if (game.here != null) ring(game.here, "to");
+  $("where").innerHTML = game.here == null ? "No home city yet. The first roll picks it."
+    : `Destination: <b>${esc(D.names[game.here])}</b>. The next roll starts from there.`;
+  $("totals").innerHTML = `<span>Trips <b>${game.trips}</b></span><span>Total <b>${money(game.total)}</b></span>
+    <span>Average <b>${game.trips ? money(Math.round(game.total / game.trips)) : "$0"}</b></span>`;
+  $("log").innerHTML = game.log.slice(0, 12).map(([t, pay]) => `<div><span>${esc(t)}</span><span>${money(pay)}</span></div>`).join("");
+}
+function restart() {
+  Object.assign(game, { here: null, from: null, trips: 0, total: 0, log: [] });
+  showDice($("dice1"), [0, 0, 0]); showDice($("dice2"), [0, 0, 0]);
+  $("res1").textContent = $("res2").textContent = ""; $("picker").hidden = true;
+  $("result").innerHTML = '<div class="sub">Three dice are thrown twice: once for the region, then for the city. The black die counts only as odd or even.</div>';
+  drawGame();
+}
+$("roll").onclick = () => rollDestination();
+$("restart").onclick = restart;
+restart();
+function showPane(id) {
+  document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.pane === id));
+  document.querySelectorAll(".pane").forEach(p => p.hidden = p.id !== id);
+}
+document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => showPane(b.dataset.pane));
+// map.html#roll=5 opens on the roller and makes five rolls straight away.
+const auto = LINKS.map(link => /^roll(?:=(\d+))?$/.exec(link)).find(Boolean);
+if (auto) (async () => {
+  showPane("paneDest");
+  for (let i = 0; i < +(auto[1] || 1); i++) await rollDestination(false, async () => D.richest[game.here]);
+})();
+
+// --------------------------------------------------------------- tooltips
+function showTip(e, html) {
+  tip.innerHTML = html; tip.hidden = false;
+  const r = tip.getBoundingClientRect();
+  tip.style.left = Math.min(e.clientX + 14, innerWidth - r.width - 8) + "px";
+  tip.style.top = Math.min(e.clientY + 14, innerHeight - r.height - 8) + "px";
+}
+svg.addEventListener("mousemove", e => {
+  if (drag && moved) { tip.hidden = true; return; }
+  const t = e.target;
+  if (t.dataset.city) {
+    const c = DATA.cities.find(c => c.name === t.dataset.city);
+    showTip(e, `<b>${esc(c.name)}</b><div class="sub">${REGION[c.region]} region</div>
+      <div>${pct(c.probability)} of destination rolls</div>
+      <div class="sub">${c.railroads.map(esc).join(", ")}</div>${payoffLines(c.node)}`);
+  } else if (t.classList.contains("hit")) {
+    const r = RR[t.dataset.rr];
+    showTip(e, `<b>${esc(r.name)}</b><div class="sub">${esc(r.id)}, ${money(r.price)}</div>`);
+  } else {
+    tip.hidden = true;
+  }
+  const rr = t.classList.contains("hit") ? t.dataset.rr : null;
+  if (rr !== hoverRR && !drag) { hoverRR = rr; focus(rr || pinned); }
+});
+svg.addEventListener("mouseleave", () => { tip.hidden = true; hoverRR = null; focus(pinned); });
+svg.addEventListener("click", e => {
+  if (moved) return;
+  if (e.target.classList.contains("hit")) pin(e.target.dataset.rr);
+  else if (!e.target.dataset.city && pinned) pin(pinned);
+});
+
+// ---------------------------------------------------------- layout switch
+const HINTS = {
+  geo: document.getElementById("hint").textContent,
+  even: "Even spacing: every piece of track is about the same length, so distance on screen is distance in moves.",
+};
+let layout = "geo", morph = 0;
+function setLayout(name, ms = 700) {
+  if (name === layout) return;
+  layout = name;
+  document.querySelectorAll("#layout button").forEach(b => b.classList.toggle("on", b.dataset.layout === name));
+  document.getElementById("hint").textContent = HINTS[name];
+  const from = {}, to = LAYOUTS[name];
+  for (const id in P) from[id] = { x: P[id].x, y: P[id].y };
+  const v0 = { ...view }, v1 = homeFor(to), run = ++morph, t0 = performance.now();
+  gLabels.style.opacity = 0;
+  const step = now => {
+    if (run !== morph) return;              // a newer switch took over
+    const t = ms ? Math.min(1, (now - t0) / ms) : 1, k = t * t * (3 - 2 * t);
+    for (const id in P) {
+      P[id].x = from[id].x + (to[id].x - from[id].x) * k;
+      P[id].y = from[id].y + (to[id].y - from[id].y) * k;
+    }
+    for (const key of "xywh") view[key] = v0[key] + (v1[key] - v0[key]) * k;
+    updateGeometry(); applyView(); drawGame();
+    if (t < 1) return requestAnimationFrame(step);
+    HOME = v1;
+    placeLabels();
+    gLabels.style.opacity = 1;
+    focus(hoverRR || pinned);
+  };
+  step(t0);
+}
+document.querySelectorAll("#layout button").forEach(b => b.onclick = () => setLayout(b.dataset.layout));
+if (LINKS.includes("even")) setLayout("even", 0);   // map.html#even
+</script>
+</body>
+</html>

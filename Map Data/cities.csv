@@ -1,0 +1,66 @@
+name,region,dot_number,node_id,probability,payout_number
+New York,NE,13,NE_13,19.444,5
+Washington DC,NE,22,NE_22,11.111,9
+Pittsburgh,NE,20,NE_20,9.722,7
+Albany,NE,5,NE_5,5.556,1
+Boston,NE,10,NE_10,13.889,3
+Philadelphia,NE,16,NE_16,13.889,6
+Buffalo,NE,8,NE_8,8.333,4
+Portland ME,NE,1,NE_1,5.556,8
+Baltimore,NE,21,NE_21,12.5,2
+Charlotte,SE,34,SE_34,4.167,12
+Norfolk,SE,87,SE_87,9.722,18
+Chattanooga,SE,42,SE_42,4.167,13
+Atlanta,SE,49,SE_49,20.833,10
+Charleston,SE,52,SE_52,5.557,11
+Miami,SE,84,SE_84,13.889,16
+Jacksonville,SE,60,SE_60,8.333,14
+Richmond,SE,7,SE_7,6.944,19
+Knoxville,SE,35,SE_35,8.333,15
+Tampa,SE,80,SE_80,9.722,20
+Mobile,SE,76,SE_76,8.333,17
+Cleveland,NC,4,NC_4,13.889,23
+Cincinnati,NC,15,NC_15,11.111,22
+Chicago,NC,38,NC_38,22.223,21
+Detroit,NC,3,NC_3,15.278,25
+Columbus,NC,11,NC_11,6.944,24
+Indianapolis,NC,22,NC_22,6.944,26
+Milwaukee,NC,37,NC_37,11.111,27
+St. Louis,NC,52,NC_52,12.5,28
+Memphis,SC,22,SC_22,9.722,35
+Shreveport,SC,51,SC_51,4.167,39
+Dallas,SC,58,SC_58,11.111,30
+Little Rock,SC,42,SC_42,5.557,33
+New Orleans,SC,32,SC_32,12.5,37
+Birmingham,SC,17,SC_17,8.333,29
+San Antonio,SC,90,SC_90,8.333,38
+Louisville,SC,1,SC_1,9.722,34
+Houston,SC,85,SC_85,12.5,32
+Nashville,SC,8,SC_8,9.722,36
+Fort Worth,SC,59,SC_59,8.333,31
+Kansas City,PL,20,PL_20,25,43
+Oklahoma City,PL,113,PL_113,11.111,45
+Minneapolis/St. Paul,PL,1,PL_1,19.444,44
+Denver,PL,74,PL_74,16.667,40
+Des Moines,PL,23,PL_23,6.944,41
+Omaha,PL,59,PL_59,9.722,46
+Pueblo,PL,94,PL_94,6.944,47
+Fargo,PL,29,PL_29,4.168,42
+Spokane,NW,36,NW_36,6.944,56
+Salt Lake City,NW,61,NW_61,12.5,54
+Seattle,NW,42,NW_42,25,55
+Portland OR,NW,81,NW_81,23.612,52
+Rapid City,NW,5,NW_5,6.944,53
+Casper,NW,16,NW_16,5.556,50
+Pocatello,NW,55,NW_55,5.556,51
+Billings,NW,26,NW_26,6.944,48
+Butte,NW,51,NW_51,6.944,49
+San Diego,SW,41,SW_41,9.722,63
+Los Angeles,SW,68,SW_68,23.611,59
+San Francisco/Oakland,SW,65,SW_65,26.389,64
+Reno,SW,55,SW_55,4.167,61
+Sacramento,SW,57,SW_57,6.944,62
+Las Vegas,SW,27,SW_27,8.333,58
+Phoenix,SW,38,SW_38,11.111,60
+El Paso,SW,14,SW_14,5.556,57
+Tucumcari,SW,2,SW_2,4.167,65

@@ -1,0 +1,177 @@
+stage,region,dice_sum,black_die_parity,result
+region,,2,odd,Plains
+region,,2,even,SouthWest
+region,,3,odd,SouthEast
+region,,3,even,SouthCentral
+region,,4,odd,SouthEast
+region,,4,even,SouthCentral
+region,,5,odd,SouthEast
+region,,5,even,SouthCentral
+region,,6,odd,NorthCentral
+region,,6,even,SouthWest
+region,,7,odd,NorthCentral
+region,,7,even,SouthWest
+region,,8,odd,NorthEast
+region,,8,even,Plains
+region,,9,odd,NorthEast
+region,,9,even,NorthWest
+region,,10,odd,NorthEast
+region,,10,even,NorthWest
+region,,11,odd,NorthEast
+region,,11,even,Plains
+region,,12,odd,NorthEast
+region,,12,even,NorthWest
+city,NorthEast,2,odd,New York
+city,NorthEast,2,even,New York
+city,NorthEast,3,odd,New York
+city,NorthEast,3,even,Washington DC
+city,NorthEast,4,odd,New York
+city,NorthEast,4,even,Pittsburgh
+city,NorthEast,5,odd,Albany
+city,NorthEast,5,even,Pittsburgh
+city,NorthEast,6,odd,Boston
+city,NorthEast,6,even,Philadelphia
+city,NorthEast,7,odd,Buffalo
+city,NorthEast,7,even,Washington DC
+city,NorthEast,8,odd,Boston
+city,NorthEast,8,even,Philadelphia
+city,NorthEast,9,odd,Portland ME
+city,NorthEast,9,even,Baltimore
+city,NorthEast,10,odd,New York
+city,NorthEast,10,even,Baltimore
+city,NorthEast,11,odd,New York
+city,NorthEast,11,even,Baltimore
+city,NorthEast,12,odd,New York
+city,NorthEast,12,even,New York
+city,SouthEast,2,odd,Charlotte
+city,SouthEast,2,even,Norfolk
+city,SouthEast,3,odd,Charlotte
+city,SouthEast,3,even,Norfolk
+city,SouthEast,4,odd,Chattanooga
+city,SouthEast,4,even,Norfolk
+city,SouthEast,5,odd,Atlanta
+city,SouthEast,5,even,Charleston
+city,SouthEast,6,odd,Atlanta
+city,SouthEast,6,even,Miami
+city,SouthEast,7,odd,Atlanta
+city,SouthEast,7,even,Jacksonville
+city,SouthEast,8,odd,Richmond
+city,SouthEast,8,even,Miami
+city,SouthEast,9,odd,Knoxville
+city,SouthEast,9,even,Tampa
+city,SouthEast,10,odd,Mobile
+city,SouthEast,10,even,Tampa
+city,SouthEast,11,odd,Knoxville
+city,SouthEast,11,even,Mobile
+city,SouthEast,12,odd,Mobile
+city,SouthEast,12,even,Norfolk
+city,NorthCentral,2,odd,Cleveland
+city,NorthCentral,2,even,Cincinnati
+city,NorthCentral,3,odd,Cleveland
+city,NorthCentral,3,even,Chicago
+city,NorthCentral,4,odd,Cleveland
+city,NorthCentral,4,even,Cincinnati
+city,NorthCentral,5,odd,Cleveland
+city,NorthCentral,5,even,Cincinnati
+city,NorthCentral,6,odd,Detroit
+city,NorthCentral,6,even,Columbus
+city,NorthCentral,7,odd,Detroit
+city,NorthCentral,7,even,Chicago
+city,NorthCentral,8,odd,Indianapolis
+city,NorthCentral,8,even,Chicago
+city,NorthCentral,9,odd,Milwaukee
+city,NorthCentral,9,even,St. Louis
+city,NorthCentral,10,odd,Milwaukee
+city,NorthCentral,10,even,St. Louis
+city,NorthCentral,11,odd,Chicago
+city,NorthCentral,11,even,St. Louis
+city,NorthCentral,12,odd,Milwaukee
+city,NorthCentral,12,even,Chicago
+city,SouthCentral,2,odd,Memphis
+city,SouthCentral,2,even,Shreveport
+city,SouthCentral,3,odd,Memphis
+city,SouthCentral,3,even,Shreveport
+city,SouthCentral,4,odd,Memphis
+city,SouthCentral,4,even,Dallas
+city,SouthCentral,5,odd,Little Rock
+city,SouthCentral,5,even,New Orleans
+city,SouthCentral,6,odd,New Orleans
+city,SouthCentral,6,even,Dallas
+city,SouthCentral,7,odd,Birmingham
+city,SouthCentral,7,even,San Antonio
+city,SouthCentral,8,odd,Louisville
+city,SouthCentral,8,even,Houston
+city,SouthCentral,9,odd,Nashville
+city,SouthCentral,9,even,Houston
+city,SouthCentral,10,odd,Nashville
+city,SouthCentral,10,even,Fort Worth
+city,SouthCentral,11,odd,Louisville
+city,SouthCentral,11,even,Fort Worth
+city,SouthCentral,12,odd,Memphis
+city,SouthCentral,12,even,Fort Worth
+city,Plains,2,odd,Kansas City
+city,Plains,2,even,Oklahoma City
+city,Plains,3,odd,Kansas City
+city,Plains,3,even,St. Paul
+city,Plains,4,odd,Denver
+city,Plains,4,even,Minneapolis
+city,Plains,5,odd,Denver
+city,Plains,5,even,St. Paul
+city,Plains,6,odd,Denver
+city,Plains,6,even,Minneapolis
+city,Plains,7,odd,Kansas City
+city,Plains,7,even,Oklahoma City
+city,Plains,8,odd,Kansas City
+city,Plains,8,even,Des Moines
+city,Plains,9,odd,Kansas City
+city,Plains,9,even,Omaha
+city,Plains,10,odd,Pueblo
+city,Plains,10,even,Omaha
+city,Plains,11,odd,Pueblo
+city,Plains,11,even,Fargo
+city,Plains,12,odd,Oklahoma City
+city,Plains,12,even,Fargo
+city,NorthWest,2,odd,Spokane
+city,NorthWest,2,even,Spokane
+city,NorthWest,3,odd,Spokane
+city,NorthWest,3,even,Salt Lake City
+city,NorthWest,4,odd,Seattle
+city,NorthWest,4,even,Salt Lake City
+city,NorthWest,5,odd,Seattle
+city,NorthWest,5,even,Salt Lake City
+city,NorthWest,6,odd,Seattle
+city,NorthWest,6,even,Portland OR
+city,NorthWest,7,odd,Seattle
+city,NorthWest,7,even,Portland OR
+city,NorthWest,8,odd,Rapid City
+city,NorthWest,8,even,Portland OR
+city,NorthWest,9,odd,Casper
+city,NorthWest,9,even,Pocatello
+city,NorthWest,10,odd,Billings
+city,NorthWest,10,even,Butte
+city,NorthWest,11,odd,Billings
+city,NorthWest,11,even,Butte
+city,NorthWest,12,odd,Spokane
+city,NorthWest,12,even,Portland OR
+city,SouthWest,2,odd,San Diego
+city,SouthWest,2,even,Los Angeles
+city,SouthWest,3,odd,San Diego
+city,SouthWest,3,even,Oakland
+city,SouthWest,4,odd,Reno
+city,SouthWest,4,even,Oakland
+city,SouthWest,5,odd,San Diego
+city,SouthWest,5,even,Oakland
+city,SouthWest,6,odd,Sacramento
+city,SouthWest,6,even,Los Angeles
+city,SouthWest,7,odd,Las Vegas
+city,SouthWest,7,even,Los Angeles
+city,SouthWest,8,odd,Phoenix
+city,SouthWest,8,even,Los Angeles
+city,SouthWest,9,odd,El Paso
+city,SouthWest,9,even,San Francisco
+city,SouthWest,10,odd,Tucumcari
+city,SouthWest,10,even,San Francisco
+city,SouthWest,11,odd,Phoenix
+city,SouthWest,11,even,San Francisco
+city,SouthWest,12,odd,Phoenix
+city,SouthWest,12,even,San Francisco

@@ -1,0 +1,749 @@
+id,from,to,railroad,railroad_name,path_index,from_raw_dot,to_raw_dot
+E0001,NE_13,NE_14,NYC,New York Central,1,13,14
+E0002,NE_14,NE_5,NYC,New York Central,1,14,5
+E0003,NE_5,NE_6,NYC,New York Central,1,5,6
+E0004,NE_6,NE_7,NYC,New York Central,1,6,7
+E0005,NE_7,NE_8,NYC,New York Central,1,7,2008
+E0006,NE_8,NE_9,NYC,New York Central,1,2008,2009
+E0007,NE_9,NC_4,NYC,New York Central,1,2009,4
+E0008,NC_4,NC_5,NYC,New York Central,1,4,5
+E0009,NC_5,NC_6,NYC,New York Central,1,5,6
+E0010,NC_6,NC_7,NYC,New York Central,1,6,7
+E0011,NC_7,NC_38,NYC,New York Central,1,7,38
+E0012,NC_3,NC_5,NYC,New York Central,2,2003,2005
+E0013,NC_5,NC_19,NYC,New York Central,2,2005,19
+E0014,NC_19,NC_20,NYC,New York Central,2,19,20
+E0015,NC_20,NC_22,NYC,New York Central,2,20,2022
+E0016,NC_22,NC_25,NYC,New York Central,2,2022,2025
+E0017,NC_25,NC_30,NYC,New York Central,2,2025,30
+E0018,NC_30,NC_52,NYC,New York Central,2,30,52
+E0019,NC_19,NC_16,NYC,New York Central,3,19,2016
+E0020,NC_16,NC_15,NYC,New York Central,3,2016,2015
+E0021,NE_13,NE_15,PA,Pennsylvania RR,1,13,15
+E0022,NE_15,NE_16,PA,Pennsylvania RR,1,15,1016
+E0023,NE_16,NE_21,PA,Pennsylvania RR,1,1016,1021
+E0024,NE_21,NE_22,PA,Pennsylvania RR,1,1021,1022
+E0025,NE_16,NE_17,PA,Pennsylvania RR,2,1016,17
+E0026,NE_21,NE_17,PA,Pennsylvania RR,3,1021,17
+E0027,NE_17,NE_18,PA,Pennsylvania RR,3,17,18
+E0028,NE_18,NE_19,PA,Pennsylvania RR,3,18,19
+E0029,NE_19,NE_20,PA,Pennsylvania RR,3,19,20
+E0030,NE_20,NC_10,PA,Pennsylvania RR,3,20,10
+E0031,NC_10,NC_11,PA,Pennsylvania RR,3,10,1011
+E0032,NC_11,NC_16,PA,Pennsylvania RR,3,1011,1016
+E0033,NC_16,NC_22,PA,Pennsylvania RR,3,1016,1022
+E0034,NC_22,NC_25,PA,Pennsylvania RR,3,1022,1025
+E0035,NC_25,NC_31,PA,Pennsylvania RR,3,1025,31
+E0036,NC_31,NC_52,PA,Pennsylvania RR,3,31,52
+E0037,NE_8,NE_9,PA,Pennsylvania RR,4,1008,1009
+E0038,NE_9,NC_8,PA,Pennsylvania RR,4,1009,3008
+E0039,NC_8,NC_9,PA,Pennsylvania RR,4,3008,2009
+E0040,NE_20,NC_8,PA,Pennsylvania RR,5,3020,3008
+E0041,NC_4,NC_9,PA,Pennsylvania RR,6,4,2009
+E0042,NC_9,NC_11,PA,Pennsylvania RR,6,2009,1011
+E0043,NC_16,NC_15,PA,Pennsylvania RR,7,1016,1015
+E0044,NC_38,NC_26,PA,Pennsylvania RR,8,5038,26
+E0045,NC_26,NC_22,PA,Pennsylvania RR,8,26,1022
+E0046,NC_22,NC_23,PA,Pennsylvania RR,8,1022,23
+E0047,NC_23,SC_1,PA,Pennsylvania RR,8,23,1
+E0048,NE_1,NE_2,B+M,Boston and Maine RR,1,1,2
+E0049,NE_2,NE_3,B+M,Boston and Maine RR,1,2,3
+E0050,NE_3,NE_4,B+M,Boston and Maine RR,1,3,4
+E0051,NE_4,NE_5,B+M,Boston and Maine RR,1,4,5
+E0052,NE_10,NE_3,B+M,Boston and Maine RR,2,10,3
+E0053,NE_10,NE_11,NYNH+H,"New York, New Haven, and Hartford RR",1,10,11
+E0054,NE_11,NE_12,NYNH+H,"New York, New Haven, and Hartford RR",1,11,12
+E0055,NE_12,NE_13,NYNH+H,"New York, New Haven, and Hartford RR",1,12,13
+E0056,NE_16,NE_21,B+O,Baltimore and Ohio,1,2016,2021
+E0057,NE_21,NE_23,B+O,Baltimore and Ohio,1,2021,23
+E0058,NE_23,SE_1,B+O,Baltimore and Ohio,1,23,1
+E0059,SE_1,NE_24,B+O,Baltimore and Ohio,1,1,24
+E0060,NE_24,NE_20,B+O,Baltimore and Ohio,1,24,1020
+E0061,NE_20,NC_8,B+O,Baltimore and Ohio,1,1020,4008
+E0062,NC_8,NC_9,B+O,Baltimore and Ohio,1,4008,1009
+E0063,NC_9,NC_18,B+O,Baltimore and Ohio,1,1009,18
+E0064,NC_18,NC_21,B+O,Baltimore and Ohio,1,18,21
+E0065,NC_21,NC_28,B+O,Baltimore and Ohio,1,21,28
+E0066,NC_28,NC_38,B+O,Baltimore and Ohio,1,28,1038
+E0067,NE_21,NE_22,B+O,Baltimore and Ohio,2,2021,2022
+E0068,NE_22,NE_23,B+O,Baltimore and Ohio,2,2022,23
+E0069,SE_1,SE_2,B+O,Baltimore and Ohio,3,1,2
+E0070,SE_2,SE_3,B+O,Baltimore and Ohio,3,2,3
+E0071,SE_3,SE_4,B+O,Baltimore and Ohio,3,3,4
+E0072,SE_4,NC_12,B+O,Baltimore and Ohio,3,4,12
+E0073,NC_12,NC_15,B+O,Baltimore and Ohio,3,12,15
+E0074,NC_15,NC_23,B+O,Baltimore and Ohio,3,15,23
+E0075,NC_23,NC_24,B+O,Baltimore and Ohio,3,23,24
+E0076,NC_24,NC_32,B+O,Baltimore and Ohio,3,24,32
+E0077,NC_32,NC_52,B+O,Baltimore and Ohio,3,32,52
+E0078,NE_22,SE_5,C+O,Chesapeake and Ohio,1,1022,1005
+E0079,SE_5,SE_8,C+O,Chesapeake and Ohio,1,1005,1008
+E0080,SE_8,SE_7,C+O,Chesapeake and Ohio,1,1008,7
+E0081,SE_8,SE_9,C+O,Chesapeake and Ohio,2,1008,9
+E0082,SE_9,SE_17,C+O,Chesapeake and Ohio,2,9,17
+E0083,SE_17,SE_10,C+O,Chesapeake and Ohio,2,17,10
+E0084,SE_10,SE_11,C+O,Chesapeake and Ohio,2,10,4011
+E0085,SE_11,NC_12,C+O,Chesapeake and Ohio,2,4011,2012
+E0086,NC_12,NC_11,C+O,Chesapeake and Ohio,2,2012,4011
+E0087,NC_11,NC_17,C+O,Chesapeake and Ohio,2,4011,17
+E0088,NC_17,NC_5,C+O,Chesapeake and Ohio,2,17,1005
+E0089,NC_5,NC_3,C+O,Chesapeake and Ohio,2,1005,1003
+E0090,NC_3,NC_2,C+O,Chesapeake and Ohio,2,1003,2
+E0091,NC_2,NC_1,C+O,Chesapeake and Ohio,2,2,1
+E0092,NC_1,NE_8,C+O,Chesapeake and Ohio,2,1,8
+E0093,SE_11,NC_14,C+O,Chesapeake and Ohio,3,4011,14
+E0094,NC_14,NC_15,C+O,Chesapeake and Ohio,3,14,15
+E0095,NC_15,NC_20,C+O,Chesapeake and Ohio,3,15,20
+E0096,NC_20,NC_27,C+O,Chesapeake and Ohio,3,20,27
+E0097,NC_27,NC_38,C+O,Chesapeake and Ohio,3,27,1038
+E0098,SE_11,SE_12,C+O,Chesapeake and Ohio,4,4011,12
+E0099,SE_12,SE_13,C+O,Chesapeake and Ohio,4,12,13
+E0100,SE_13,SC_1,C+O,Chesapeake and Ohio,4,13,1
+E0101,SE_7,SE_14,ACL,Atlantic Coast Line,1,1007,1014
+E0102,SE_14,SE_20,ACL,Atlantic Coast Line,1,1014,20
+E0103,SE_20,SE_26,ACL,Atlantic Coast Line,1,20,26
+E0104,SE_26,SE_33,ACL,Atlantic Coast Line,1,26,33
+E0105,SE_33,SE_45,ACL,Atlantic Coast Line,1,33,45
+E0106,SE_45,SE_51,ACL,Atlantic Coast Line,1,45,51
+E0107,SE_51,SE_52,ACL,Atlantic Coast Line,1,51,2052
+E0108,SE_52,SE_53,ACL,Atlantic Coast Line,1,2052,2053
+E0109,SE_53,SE_55,ACL,Atlantic Coast Line,1,2053,55
+E0110,SE_55,SE_60,ACL,Atlantic Coast Line,1,55,60
+E0111,SE_60,SE_78,ACL,Atlantic Coast Line,1,60,78
+E0112,SE_78,SE_79,ACL,Atlantic Coast Line,1,78,4079
+E0113,SE_79,SE_80,ACL,Atlantic Coast Line,1,4079,4080
+E0114,SE_55,SE_56,ACL,Atlantic Coast Line,2,55,56
+E0115,SE_56,SE_57,ACL,Atlantic Coast Line,2,56,57
+E0116,SE_57,SE_49,ACL,Atlantic Coast Line,2,57,49
+E0117,SE_57,SE_59,ACL,Atlantic Coast Line,3,57,59
+E0118,SE_59,SC_17,ACL,Atlantic Coast Line,3,59,17
+E0119,SE_55,SE_61,ACL,Atlantic Coast Line,4,55,61
+E0120,SE_61,SE_62,ACL,Atlantic Coast Line,4,61,62
+E0121,SE_62,SE_68,ACL,Atlantic Coast Line,4,62,68
+E0122,SE_68,SE_70,ACL,Atlantic Coast Line,4,68,70
+E0123,SE_70,SE_65,ACL,Atlantic Coast Line,4,70,65
+E0124,SE_56,SE_63,ACL,Atlantic Coast Line,5,56,63
+E0125,SE_63,SE_62,ACL,Atlantic Coast Line,5,63,62
+E0126,SE_62,SE_67,ACL,Atlantic Coast Line,5,62,67
+E0127,SE_67,SE_78,ACL,Atlantic Coast Line,5,67,78
+E0128,NE_22,SE_5,SOU,Southern Railway,1,22,2005
+E0129,SE_5,SE_8,SOU,Southern Railway,1,2005,2008
+E0130,SE_8,SE_16,SOU,Southern Railway,1,2008,16
+E0131,SE_16,SE_22,SOU,Southern Railway,1,16,22
+E0132,SE_22,SE_28,SOU,Southern Railway,1,22,28
+E0133,SE_28,SE_34,SOU,Southern Railway,1,28,34
+E0134,SE_34,SE_38,SOU,Southern Railway,1,34,38
+E0135,SE_38,SE_39,SOU,Southern Railway,1,38,39
+E0136,SE_39,SE_44,SOU,Southern Railway,1,39,44
+E0137,SE_44,SE_49,SOU,Southern Railway,1,44,49
+E0138,SE_49,SE_58,SOU,Southern Railway,1,49,58
+E0139,SE_58,SC_17,SOU,Southern Railway,1,58,17
+E0140,SC_17,SE_72,SOU,Southern Railway,1,17,72
+E0141,SE_72,SC_28,SOU,Southern Railway,1,72,28
+E0142,SC_28,SC_29,SOU,Southern Railway,1,28,29
+E0143,SC_29,SC_31,SOU,Southern Railway,1,29,31
+E0144,SC_31,SC_32,SOU,Southern Railway,1,31,32
+E0145,SE_29,SE_32,SOU,Southern Railway,2,29,32
+E0146,SE_32,SE_35,SOU,Southern Railway,2,32,35
+E0147,SE_35,SE_41,SOU,Southern Railway,2,35,41
+E0148,SE_41,SE_85,SOU,Southern Railway,2,41,85
+E0149,SE_85,SE_88,SOU,Southern Railway,2,85,88
+E0150,SE_88,SE_49,SOU,Southern Railway,2,88,49
+E0151,SE_85,SE_42,SOU,Southern Railway,3,85,42
+E0152,SE_42,SC_15,SOU,Southern Railway,3,42,15
+E0153,SC_15,SC_19,SOU,Southern Railway,3,15,19
+E0154,SC_19,SC_21,SOU,Southern Railway,3,19,21
+E0155,SC_21,SC_22,SOU,Southern Railway,3,21,22
+E0156,SC_17,SC_20,SOU,Southern Railway,4,17,20
+E0157,SC_20,SC_21,SOU,Southern Railway,4,20,21
+E0158,SE_7,SE_14,SAL,Seaboard Airline RR,1,4007,4014
+E0159,SE_14,SE_21,SAL,Seaboard Airline RR,1,4014,21
+E0160,SE_21,SE_27,SAL,Seaboard Airline RR,1,21,27
+E0161,SE_27,SE_31,SAL,Seaboard Airline RR,1,27,31
+E0162,SE_31,SE_36,SAL,Seaboard Airline RR,1,31,36
+E0163,SE_36,SE_45,SAL,Seaboard Airline RR,1,36,45
+E0164,SE_45,SE_50,SAL,Seaboard Airline RR,1,45,50
+E0165,SE_50,SE_52,SAL,Seaboard Airline RR,1,50,1052
+E0166,SE_52,SE_53,SAL,Seaboard Airline RR,1,1052,1053
+E0167,SE_53,SE_54,SAL,Seaboard Airline RR,1,1053,54
+E0168,SE_54,SE_60,SAL,Seaboard Airline RR,1,54,60
+E0169,SE_60,SE_77,SAL,Seaboard Airline RR,1,60,77
+E0170,SE_77,SE_79,SAL,Seaboard Airline RR,1,77,1079
+E0171,SE_79,SE_81,SAL,Seaboard Airline RR,1,1079,81
+E0172,SE_81,SE_82,SAL,Seaboard Airline RR,1,81,82
+E0173,SE_82,SE_83,SAL,Seaboard Airline RR,1,82,83
+E0174,SE_83,SE_84,SAL,Seaboard Airline RR,1,83,84
+E0175,SE_36,SE_37,SAL,Seaboard Airline RR,2,36,37
+E0176,SE_37,SE_46,SAL,Seaboard Airline RR,2,37,46
+E0177,SE_46,SE_47,SAL,Seaboard Airline RR,2,46,47
+E0178,SE_47,SE_48,SAL,Seaboard Airline RR,2,47,48
+E0179,SE_48,SE_49,SAL,Seaboard Airline RR,2,48,49
+E0180,SE_49,SC_16,SAL,Seaboard Airline RR,2,49,16
+E0181,SC_16,SC_17,SAL,Seaboard Airline RR,2,16,17
+E0182,SE_34,SE_37,SAL,Seaboard Airline RR,3,34,37
+E0183,SE_79,SE_80,SAL,Seaboard Airline RR,4,1079,1080
+E0184,SE_60,SE_66,SAL,Seaboard Airline RR,5,60,66
+E0185,SE_66,SE_67,SAL,Seaboard Airline RR,5,66,67
+E0186,SE_67,SE_86,SAL,Seaboard Airline RR,5,67,86
+E0187,SE_86,SE_69,SAL,Seaboard Airline RR,5,86,69
+E0188,SE_86,SE_68,SAL,Seaboard Airline RR,6,86,68
+E0189,SE_68,SE_64,SAL,Seaboard Airline RR,6,68,64
+E0190,SE_64,SE_65,SAL,Seaboard Airline RR,6,64,65
+E0191,NE_22,SE_6,RF+P,"Richmond, Fredericksburg, and Potomac RR",1,1022,6
+E0192,SE_6,SE_7,RF+P,"Richmond, Fredericksburg, and Potomac RR",1,6,1007
+E0193,NC_38,NC_45,CB+Q,"Chicago, Burlington, and Quincy",1,1038,1045
+E0194,NC_45,PL_8,CB+Q,"Chicago, Burlington, and Quincy",1,1045,8
+E0195,PL_8,NC_48,CB+Q,"Chicago, Burlington, and Quincy",1,8,48
+E0196,NC_48,NC_49,CB+Q,"Chicago, Burlington, and Quincy",1,48,49
+E0197,NC_49,NC_52,CB+Q,"Chicago, Burlington, and Quincy",1,49,52
+E0198,PL_8,PL_9,CB+Q,"Chicago, Burlington, and Quincy",2,8,9
+E0199,PL_9,PL_22,CB+Q,"Chicago, Burlington, and Quincy",2,9,22
+E0200,PL_22,PL_58,CB+Q,"Chicago, Burlington, and Quincy",2,22,58
+E0201,PL_58,PL_59,CB+Q,"Chicago, Burlington, and Quincy",2,58,1059
+E0202,PL_59,PL_119,CB+Q,"Chicago, Burlington, and Quincy",2,1059,1119
+E0203,PL_119,PL_61,CB+Q,"Chicago, Burlington, and Quincy",2,1119,61
+E0204,PL_61,PL_55,CB+Q,"Chicago, Burlington, and Quincy",2,61,55
+E0205,PL_55,NW_7,CB+Q,"Chicago, Burlington, and Quincy",2,55,7
+E0206,NW_7,NW_9,CB+Q,"Chicago, Burlington, and Quincy",2,7,9
+E0207,NW_9,NW_10,CB+Q,"Chicago, Burlington, and Quincy",2,9,10
+E0208,NW_9,NW_11,CB+Q,"Chicago, Burlington, and Quincy",3,9,11
+E0209,NW_11,NW_15,CB+Q,"Chicago, Burlington, and Quincy",3,11,4015
+E0210,NW_15,NW_16,CB+Q,"Chicago, Burlington, and Quincy",3,4015,4016
+E0211,NW_16,NW_18,CB+Q,"Chicago, Burlington, and Quincy",3,4016,18
+E0212,NW_18,NW_24,CB+Q,"Chicago, Burlington, and Quincy",3,18,24
+E0213,NW_24,NW_25,CB+Q,"Chicago, Burlington, and Quincy",3,24,25
+E0214,NW_25,NW_26,CB+Q,"Chicago, Burlington, and Quincy",3,25,26
+E0215,PL_59,PL_64,CB+Q,"Chicago, Burlington, and Quincy",4,1059,64
+E0216,PL_64,PL_65,CB+Q,"Chicago, Burlington, and Quincy",4,64,65
+E0217,PL_65,PL_20,CB+Q,"Chicago, Burlington, and Quincy",4,65,20
+E0218,PL_119,PL_67,CB+Q,"Chicago, Burlington, and Quincy",5,1119,1067
+E0219,PL_67,PL_69,CB+Q,"Chicago, Burlington, and Quincy",5,1067,69
+E0220,PL_69,PL_70,CB+Q,"Chicago, Burlington, and Quincy",5,69,70
+E0221,PL_70,PL_71,CB+Q,"Chicago, Burlington, and Quincy",5,70,71
+E0222,PL_71,PL_72,CB+Q,"Chicago, Burlington, and Quincy",5,71,72
+E0223,PL_72,PL_73,CB+Q,"Chicago, Burlington, and Quincy",5,72,73
+E0224,PL_73,PL_74,CB+Q,"Chicago, Burlington, and Quincy",5,73,2074
+E0225,PL_74,NW_12,CB+Q,"Chicago, Burlington, and Quincy",5,2074,2012
+E0226,NW_12,NW_13,CB+Q,"Chicago, Burlington, and Quincy",5,2012,13
+E0227,NW_13,NW_15,CB+Q,"Chicago, Burlington, and Quincy",5,13,15
+E0228,PL_74,PL_84,CB+Q,"Chicago, Burlington, and Quincy",6,2074,2084
+E0229,PL_84,PL_94,CB+Q,"Chicago, Burlington, and Quincy",6,2084,2094
+E0230,PL_94,PL_106,CB+Q,"Chicago, Burlington, and Quincy",6,2094,106
+E0231,PL_106,SC_67,CB+Q,"Chicago, Burlington, and Quincy",6,106,67
+E0232,SC_67,SC_66,CB+Q,"Chicago, Burlington, and Quincy",6,67,66
+E0233,SC_66,SC_68,CB+Q,"Chicago, Burlington, and Quincy",6,66,68
+E0234,SC_68,SC_63,CB+Q,"Chicago, Burlington, and Quincy",6,68,63
+E0235,SC_63,SC_62,CB+Q,"Chicago, Burlington, and Quincy",6,63,62
+E0236,SC_62,SC_61,CB+Q,"Chicago, Burlington, and Quincy",6,62,61
+E0237,SC_61,SC_60,CB+Q,"Chicago, Burlington, and Quincy",6,61,4060
+E0238,SC_60,SC_59,CB+Q,"Chicago, Burlington, and Quincy",6,4060,4059
+E0239,NC_38,NC_29,IC,Illinois Central RR,1,5038,29
+E0240,NC_29,NC_30,IC,Illinois Central RR,1,29,30
+E0241,NC_30,NC_31,IC,Illinois Central RR,1,30,31
+E0242,NC_31,NC_32,IC,Illinois Central RR,1,31,32
+E0243,NC_32,NC_33,IC,Illinois Central RR,1,32,33
+E0244,NC_33,SC_11,IC,Illinois Central RR,1,33,11
+E0245,SC_11,SC_12,IC,Illinois Central RR,1,11,12
+E0246,SC_12,SC_22,IC,Illinois Central RR,1,12,22
+E0247,SC_22,SC_26,IC,Illinois Central RR,1,22,26
+E0248,SC_26,SC_25,IC,Illinois Central RR,1,26,25
+E0249,SC_25,SC_27,IC,Illinois Central RR,1,25,27
+E0250,SC_27,SC_34,IC,Illinois Central RR,1,27,34
+E0251,SC_34,SC_33,IC,Illinois Central RR,1,34,33
+E0252,SC_33,SC_32,IC,Illinois Central RR,1,33,32
+E0253,SC_1,SC_3,IC,Illinois Central RR,2,1,3
+E0254,SC_3,SC_4,IC,Illinois Central RR,2,3,4
+E0255,SC_4,SC_7,IC,Illinois Central RR,2,4,7
+E0256,SC_7,SC_11,IC,Illinois Central RR,2,7,11
+E0257,NC_52,NC_33,IC,Illinois Central RR,3,52,33
+E0258,SC_4,SC_5,IC,Illinois Central RR,4,4,5
+E0259,SC_28,SC_27,IC,Illinois Central RR,5,28,27
+E0260,SC_27,SC_35,IC,Illinois Central RR,5,27,35
+E0261,SC_35,SC_43,IC,Illinois Central RR,5,35,43
+E0262,SC_43,SC_52,IC,Illinois Central RR,5,43,52
+E0263,SC_52,SC_51,IC,Illinois Central RR,5,52,51
+E0264,SC_22,SC_41,MP,Missouri Pacific,1,22,41
+E0265,SC_41,SC_42,MP,Missouri Pacific,1,41,42
+E0266,SC_42,SC_49,MP,Missouri Pacific,1,42,49
+E0267,SC_49,SC_50,MP,Missouri Pacific,1,49,50
+E0268,SC_50,SC_55,MP,Missouri Pacific,1,50,55
+E0269,SC_55,SC_75,MP,Missouri Pacific,1,55,75
+E0270,SC_75,SC_82,MP,Missouri Pacific,1,75,82
+E0271,SC_82,SC_83,MP,Missouri Pacific,1,82,83
+E0272,SC_83,SC_88,MP,Missouri Pacific,1,83,88
+E0273,SC_88,SC_90,MP,Missouri Pacific,1,88,90
+E0274,SC_75,SC_81,MP,Missouri Pacific,2,75,81
+E0275,SC_81,SC_85,MP,Missouri Pacific,2,81,85
+E0276,NC_52,NC_54,MP,Missouri Pacific,3,52,54
+E0277,NC_54,NC_57,MP,Missouri Pacific,3,54,57
+E0278,NC_57,SC_36,MP,Missouri Pacific,3,57,36
+E0279,SC_36,SC_94,MP,Missouri Pacific,3,36,94
+E0280,SC_94,SC_41,MP,Missouri Pacific,3,94,41
+E0281,SC_94,SC_40,MP,Missouri Pacific,4,94,40
+E0282,SC_40,SC_46,MP,Missouri Pacific,4,40,46
+E0283,SC_46,PL_15,MP,Missouri Pacific,4,46,15
+E0284,PL_15,PL_16,MP,Missouri Pacific,4,15,16
+E0285,PL_16,PL_18,MP,Missouri Pacific,4,16,18
+E0286,PL_18,PL_20,MP,Missouri Pacific,4,18,5020
+E0287,NC_52,NC_51,MP,Missouri Pacific,5,52,51
+E0288,NC_51,PL_13,MP,Missouri Pacific,5,51,13
+E0289,PL_13,PL_17,MP,Missouri Pacific,5,13,17
+E0290,PL_17,PL_20,MP,Missouri Pacific,5,17,5020
+E0291,PL_20,PL_87,MP,Missouri Pacific,6,2020,2087
+E0292,PL_87,PL_88,MP,Missouri Pacific,6,2087,88
+E0293,PL_88,PL_89,MP,Missouri Pacific,6,88,89
+E0294,PL_89,PL_90,MP,Missouri Pacific,6,89,90
+E0295,PL_90,PL_91,MP,Missouri Pacific,6,90,91
+E0296,PL_91,PL_92,MP,Missouri Pacific,6,91,92
+E0297,PL_92,PL_93,MP,Missouri Pacific,6,92,93
+E0298,PL_93,PL_94,MP,Missouri Pacific,6,93,1094
+E0299,NC_38,NC_46,AT+SF,"Atchison, Topeka, and Santa Fe RR",1,5038,46
+E0300,NC_46,PL_8,AT+SF,"Atchison, Topeka, and Santa Fe RR",1,46,8
+E0301,PL_8,NC_59,AT+SF,"Atchison, Topeka, and Santa Fe RR",1,8,59
+E0302,NC_59,PL_11,AT+SF,"Atchison, Topeka, and Santa Fe RR",1,59,11
+E0303,PL_11,PL_20,AT+SF,"Atchison, Topeka, and Santa Fe RR",1,11,1020
+E0304,PL_20,PL_87,AT+SF,"Atchison, Topeka, and Santa Fe RR",1,1020,1087
+E0305,PL_87,PL_95,AT+SF,"Atchison, Topeka, and Santa Fe RR",1,1087,95
+E0306,PL_95,PL_101,AT+SF,"Atchison, Topeka, and Santa Fe RR",1,95,101
+E0307,PL_101,PL_108,AT+SF,"Atchison, Topeka, and Santa Fe RR",1,101,108
+E0308,PL_108,PL_113,AT+SF,"Atchison, Topeka, and Santa Fe RR",1,108,113
+E0309,PL_113,PL_114,AT+SF,"Atchison, Topeka, and Santa Fe RR",1,113,114
+E0310,PL_114,PL_115,AT+SF,"Atchison, Topeka, and Santa Fe RR",1,114,115
+E0311,PL_115,SC_59,AT+SF,"Atchison, Topeka, and Santa Fe RR",1,115,1059
+E0312,SC_59,SC_76,AT+SF,"Atchison, Topeka, and Santa Fe RR",1,1059,76
+E0313,SC_76,SC_83,AT+SF,"Atchison, Topeka, and Santa Fe RR",1,76,83
+E0314,SC_83,SC_86,AT+SF,"Atchison, Topeka, and Santa Fe RR",1,83,86
+E0315,SC_86,SC_87,AT+SF,"Atchison, Topeka, and Santa Fe RR",1,86,2087
+E0316,SC_87,SC_85,AT+SF,"Atchison, Topeka, and Santa Fe RR",1,2087,2085
+E0317,PL_95,PL_96,AT+SF,"Atchison, Topeka, and Santa Fe RR",2,95,96
+E0318,PL_96,PL_97,AT+SF,"Atchison, Topeka, and Santa Fe RR",2,96,97
+E0319,PL_97,PL_98,AT+SF,"Atchison, Topeka, and Santa Fe RR",2,97,98
+E0320,PL_98,PL_99,AT+SF,"Atchison, Topeka, and Santa Fe RR",2,98,99
+E0321,PL_99,PL_105,AT+SF,"Atchison, Topeka, and Santa Fe RR",2,99,105
+E0322,PL_105,PL_94,AT+SF,"Atchison, Topeka, and Santa Fe RR",2,105,1094
+E0323,PL_105,PL_106,AT+SF,"Atchison, Topeka, and Santa Fe RR",3,105,106
+E0324,PL_106,SW_1,AT+SF,"Atchison, Topeka, and Santa Fe RR",3,106,1
+E0325,SW_1,SW_10,AT+SF,"Atchison, Topeka, and Santa Fe RR",3,1,10
+E0326,SW_10,SW_11,AT+SF,"Atchison, Topeka, and Santa Fe RR",3,10,11
+E0327,SW_11,SW_9,AT+SF,"Atchison, Topeka, and Santa Fe RR",3,11,9
+E0328,SW_9,SW_3,AT+SF,"Atchison, Topeka, and Santa Fe RR",3,9,3
+E0329,SW_3,SC_73,AT+SF,"Atchison, Topeka, and Santa Fe RR",3,3,73
+E0330,SC_73,SC_72,AT+SF,"Atchison, Topeka, and Santa Fe RR",3,73,72
+E0331,SC_72,SC_71,AT+SF,"Atchison, Topeka, and Santa Fe RR",3,72,71
+E0332,SC_71,SC_78,AT+SF,"Atchison, Topeka, and Santa Fe RR",3,71,78
+E0333,SC_78,SC_77,AT+SF,"Atchison, Topeka, and Santa Fe RR",3,78,77
+E0334,SC_77,SC_84,AT+SF,"Atchison, Topeka, and Santa Fe RR",3,77,84
+E0335,SC_84,SC_83,AT+SF,"Atchison, Topeka, and Santa Fe RR",3,84,83
+E0336,SC_68,SW_3,AT+SF,"Atchison, Topeka, and Santa Fe RR",4,68,3
+E0337,SW_11,SW_12,AT+SF,"Atchison, Topeka, and Santa Fe RR",5,11,12
+E0338,SW_12,SW_13,AT+SF,"Atchison, Topeka, and Santa Fe RR",5,12,13
+E0339,SW_13,SW_14,AT+SF,"Atchison, Topeka, and Santa Fe RR",5,13,14
+E0340,SW_11,SW_16,AT+SF,"Atchison, Topeka, and Santa Fe RR",6,11,16
+E0341,SW_16,SW_18,AT+SF,"Atchison, Topeka, and Santa Fe RR",6,16,18
+E0342,SW_18,SW_28,AT+SF,"Atchison, Topeka, and Santa Fe RR",6,18,28
+E0343,SW_28,SW_29,AT+SF,"Atchison, Topeka, and Santa Fe RR",6,28,29
+E0344,SW_29,SW_30,AT+SF,"Atchison, Topeka, and Santa Fe RR",6,29,30
+E0345,SW_30,SW_71,AT+SF,"Atchison, Topeka, and Santa Fe RR",6,30,71
+E0346,SW_71,SW_38,AT+SF,"Atchison, Topeka, and Santa Fe RR",6,71,38
+E0347,SW_30,SW_31,AT+SF,"Atchison, Topeka, and Santa Fe RR",7,30,31
+E0348,SW_31,SW_32,AT+SF,"Atchison, Topeka, and Santa Fe RR",7,31,32
+E0349,SW_32,SW_34,AT+SF,"Atchison, Topeka, and Santa Fe RR",7,32,34
+E0350,SW_34,SW_44,AT+SF,"Atchison, Topeka, and Santa Fe RR",7,34,1044
+E0351,SW_44,SW_43,AT+SF,"Atchison, Topeka, and Santa Fe RR",7,1044,43
+E0352,SW_43,SW_68,AT+SF,"Atchison, Topeka, and Santa Fe RR",7,43,68
+E0353,SW_68,SW_42,AT+SF,"Atchison, Topeka, and Santa Fe RR",7,68,42
+E0354,SW_42,SW_41,AT+SF,"Atchison, Topeka, and Santa Fe RR",7,42,41
+E0355,SW_44,SW_45,AT+SF,"Atchison, Topeka, and Santa Fe RR",8,1044,45
+E0356,SW_45,SW_49,AT+SF,"Atchison, Topeka, and Santa Fe RR",8,45,49
+E0357,SW_49,SW_50,AT+SF,"Atchison, Topeka, and Santa Fe RR",8,49,50
+E0358,SW_50,SW_51,AT+SF,"Atchison, Topeka, and Santa Fe RR",8,50,1051
+E0359,SW_51,SW_65,AT+SF,"Atchison, Topeka, and Santa Fe RR",8,1051,1065
+E0360,NC_38,NC_36,C+NW,Chicago and NorthWestern RR,1,3038,3036
+E0361,NC_36,NC_37,C+NW,Chicago and NorthWestern RR,1,3036,3037
+E0362,NC_37,NC_39,C+NW,Chicago and NorthWestern RR,1,3037,39
+E0363,NC_39,NC_41,C+NW,Chicago and NorthWestern RR,1,39,41
+E0364,NC_41,NC_42,C+NW,Chicago and NorthWestern RR,1,41,42
+E0365,NC_42,PL_1,C+NW,Chicago and NorthWestern RR,1,42,1
+E0366,PL_1,PL_25,C+NW,Chicago and NorthWestern RR,1,1,25
+E0367,PL_25,PL_44,C+NW,Chicago and NorthWestern RR,1,25,44
+E0368,PL_44,PL_46,C+NW,Chicago and NorthWestern RR,1,44,46
+E0369,PL_46,PL_47,C+NW,Chicago and NorthWestern RR,1,46,47
+E0370,PL_47,PL_48,C+NW,Chicago and NorthWestern RR,1,47,48
+E0371,PL_48,PL_49,C+NW,Chicago and NorthWestern RR,1,48,49
+E0372,PL_49,NW_5,C+NW,Chicago and NorthWestern RR,1,49,5
+E0373,NW_5,NW_6,C+NW,Chicago and NorthWestern RR,1,5,6
+E0374,NW_6,NW_84,C+NW,Chicago and NorthWestern RR,1,6,84
+E0375,NC_38,NC_44,C+NW,Chicago and NorthWestern RR,2,38,44
+E0376,NC_44,PL_6,C+NW,Chicago and NorthWestern RR,2,44,6
+E0377,PL_6,PL_5,C+NW,Chicago and NorthWestern RR,2,6,5
+E0378,PL_5,PL_24,C+NW,Chicago and NorthWestern RR,2,5,24
+E0379,PL_24,PL_50,C+NW,Chicago and NorthWestern RR,2,24,50
+E0380,PL_50,PL_59,C+NW,Chicago and NorthWestern RR,2,50,59
+E0381,PL_59,PL_52,C+NW,Chicago and NorthWestern RR,2,59,52
+E0382,PL_52,PL_53,C+NW,Chicago and NorthWestern RR,2,52,53
+E0383,PL_53,PL_54,C+NW,Chicago and NorthWestern RR,2,53,54
+E0384,PL_54,PL_56,C+NW,Chicago and NorthWestern RR,2,54,56
+E0385,PL_56,NW_84,C+NW,Chicago and NorthWestern RR,2,56,84
+E0386,NW_84,NW_10,C+NW,Chicago and NorthWestern RR,2,84,10
+E0387,NW_10,NW_15,C+NW,Chicago and NorthWestern RR,2,10,3015
+E0388,NW_15,NW_16,C+NW,Chicago and NorthWestern RR,2,3015,3016
+E0389,PL_25,PL_45,C+NW,Chicago and NorthWestern RR,3,25,45
+E0390,PL_45,PL_51,C+NW,Chicago and NorthWestern RR,3,45,51
+E0391,PL_51,PL_59,C+NW,Chicago and NorthWestern RR,3,51,59
+E0392,NC_15,SE_13,L+N,Louisville and Nashville,1,15,13
+E0393,SE_13,SE_19,L+N,Louisville and Nashville,1,13,19
+E0394,SE_19,SE_30,L+N,Louisville and Nashville,1,19,30
+E0395,SE_30,SE_35,L+N,Louisville and Nashville,1,30,35
+E0396,SE_35,SE_40,L+N,Louisville and Nashville,1,35,40
+E0397,SE_40,SE_43,L+N,Louisville and Nashville,1,40,43
+E0398,SE_43,SE_49,L+N,Louisville and Nashville,1,43,49
+E0399,NC_15,SC_1,L+N,Louisville and Nashville,2,15,1
+E0400,SC_1,SC_2,L+N,Louisville and Nashville,2,1,2
+E0401,SC_2,SC_6,L+N,Louisville and Nashville,2,2,6
+E0402,SC_6,SC_8,L+N,Louisville and Nashville,2,6,8
+E0403,SC_8,SC_13,L+N,Louisville and Nashville,2,8,13
+E0404,SC_13,SE_42,L+N,Louisville and Nashville,2,13,42
+E0405,SE_42,SE_43,L+N,Louisville and Nashville,2,42,43
+E0406,SC_8,SC_14,L+N,Louisville and Nashville,3,8,14
+E0407,SC_14,SC_18,L+N,Louisville and Nashville,3,14,18
+E0408,SC_18,SC_17,L+N,Louisville and Nashville,3,18,17
+E0409,SC_17,SE_65,L+N,Louisville and Nashville,3,17,65
+E0410,SE_65,SE_71,L+N,Louisville and Nashville,3,65,71
+E0411,SE_71,SE_75,L+N,Louisville and Nashville,3,71,75
+E0412,SE_75,SE_74,L+N,Louisville and Nashville,3,75,74
+E0413,SE_74,SE_73,L+N,Louisville and Nashville,3,74,73
+E0414,SE_73,SE_69,L+N,Louisville and Nashville,3,73,69
+E0415,SC_8,SC_9,L+N,Louisville and Nashville,4,8,9
+E0416,SC_9,SC_10,L+N,Louisville and Nashville,4,9,10
+E0417,SC_10,SC_22,L+N,Louisville and Nashville,4,10,22
+E0418,SC_8,SC_5,L+N,Louisville and Nashville,5,8,5
+E0419,SE_75,SE_76,L+N,Louisville and Nashville,6,75,76
+E0420,SE_76,SC_30,L+N,Louisville and Nashville,6,76,30
+E0421,SC_30,SC_32,L+N,Louisville and Nashville,6,30,32
+E0422,SC_32,SC_38,T+P,Texas and Pacific,1,32,38
+E0423,SC_38,SC_44,T+P,Texas and Pacific,1,38,44
+E0424,SC_44,SC_53,T+P,Texas and Pacific,1,44,53
+E0425,SC_53,SC_51,T+P,Texas and Pacific,1,53,51
+E0426,SC_51,SC_50,T+P,Texas and Pacific,1,51,50
+E0427,SC_51,SC_55,T+P,Texas and Pacific,2,51,55
+E0428,SC_55,SC_57,T+P,Texas and Pacific,2,55,57
+E0429,SC_57,SC_58,T+P,Texas and Pacific,2,57,1058
+E0430,SC_58,SC_59,T+P,Texas and Pacific,2,1058,1059
+E0431,SC_59,SC_69,T+P,Texas and Pacific,2,1059,69
+E0432,SC_69,SC_70,T+P,Texas and Pacific,2,69,70
+E0433,SC_70,SC_71,T+P,Texas and Pacific,2,70,71
+E0434,SC_71,SC_79,T+P,Texas and Pacific,2,71,79
+E0435,SC_79,SW_4,T+P,Texas and Pacific,2,79,4
+E0436,SW_4,SW_6,T+P,Texas and Pacific,2,4,3006
+E0437,SW_6,SW_14,T+P,Texas and Pacific,2,3006,3014
+E0438,NC_38,NC_36,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,38,4036
+E0439,NC_36,NC_37,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,4036,4037
+E0440,NC_37,NC_40,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,4037,40
+E0441,NC_40,NC_41,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,40,41
+E0442,NC_41,NC_43,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,41,43
+E0443,NC_43,PL_1,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,43,1
+E0444,PL_1,PL_26,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,1,26
+E0445,PL_26,PL_39,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,26,39
+E0446,PL_39,PL_40,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,39,40
+E0447,PL_40,PL_41,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,40,41
+E0448,PL_41,PL_42,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,41,42
+E0449,PL_42,PL_43,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,42,43
+E0450,PL_43,NW_4,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,43,4
+E0451,NW_4,NW_19,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,4,2019
+E0452,NW_19,NW_20,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,2019,2020
+E0453,NW_20,NW_27,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,2020,27
+E0454,NW_27,NW_29,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,27,29
+E0455,NW_29,NW_43,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,29,43
+E0456,NW_43,NW_51,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,43,4051
+E0457,NW_51,NW_46,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,4051,4046
+E0458,NW_46,NW_48,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,4046,48
+E0459,NW_48,NW_50,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,48,50
+E0460,NW_50,NW_36,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,50,36
+E0461,NW_36,NW_38,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,36,2038
+E0462,NW_38,NW_40,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,2038,3040
+E0463,NW_40,NW_42,CMStP+P,"Chicago, Milwaukee, St. Paul, and Pacific",1,3040,3042
+E0464,SE_87,SE_14,N+W,Norfolk and Western,1,87,14
+E0465,SE_14,SE_15,N+W,Norfolk and Western,1,14,15
+E0466,SE_15,SE_16,N+W,Norfolk and Western,1,15,16
+E0467,SE_16,SE_23,N+W,Norfolk and Western,1,16,23
+E0468,SE_23,SE_25,N+W,Norfolk and Western,1,23,25
+E0469,SE_25,SE_29,N+W,Norfolk and Western,1,25,29
+E0470,SE_23,SE_24,N+W,Norfolk and Western,2,23,24
+E0471,SE_24,SE_18,N+W,Norfolk and Western,2,24,18
+E0472,SE_18,SE_11,N+W,Norfolk and Western,2,18,1011
+E0473,SE_11,NC_12,N+W,Norfolk and Western,2,1011,3012
+E0474,NC_12,NC_11,N+W,Norfolk and Western,2,3012,3011
+E0475,SE_11,NC_13,N+W,Norfolk and Western,3,1011,13
+E0476,NC_13,NC_15,N+W,Norfolk and Western,3,13,1015
+E0477,NC_38,NC_35,GM+O,"Gulf, Mobile, and Ohio",1,5038,35
+E0478,NC_35,NC_47,GM+O,"Gulf, Mobile, and Ohio",1,35,47
+E0479,NC_47,NC_52,GM+O,"Gulf, Mobile, and Ohio",1,47,52
+E0480,NC_52,NC_34,GM+O,"Gulf, Mobile, and Ohio",1,52,34
+E0481,NC_34,SC_11,GM+O,"Gulf, Mobile, and Ohio",1,34,11
+E0482,SC_11,SC_10,GM+O,"Gulf, Mobile, and Ohio",1,11,10
+E0483,SC_10,SC_21,GM+O,"Gulf, Mobile, and Ohio",1,10,21
+E0484,SC_21,SC_23,GM+O,"Gulf, Mobile, and Ohio",1,21,23
+E0485,SC_23,SC_24,GM+O,"Gulf, Mobile, and Ohio",1,23,24
+E0486,SC_24,SE_72,GM+O,"Gulf, Mobile, and Ohio",1,24,72
+E0487,SE_72,SE_65,GM+O,"Gulf, Mobile, and Ohio",1,72,65
+E0488,SC_24,SC_28,GM+O,"Gulf, Mobile, and Ohio",2,24,28
+E0489,SC_28,SE_76,GM+O,"Gulf, Mobile, and Ohio",2,28,76
+E0490,NC_47,NC_49,GM+O,"Gulf, Mobile, and Ohio",3,47,49
+E0491,NC_49,NC_50,GM+O,"Gulf, Mobile, and Ohio",3,49,50
+E0492,NC_50,PL_12,GM+O,"Gulf, Mobile, and Ohio",3,50,12
+E0493,PL_12,PL_20,GM+O,"Gulf, Mobile, and Ohio",3,12,1020
+E0494,SC_32,SC_39,SP,Southern Pacific,1,32,39
+E0495,SC_39,SC_45,SP,Southern Pacific,1,39,45
+E0496,SC_45,SC_54,SP,Southern Pacific,1,45,54
+E0497,SC_54,SC_85,SP,Southern Pacific,1,54,1085
+E0498,SC_85,SC_87,SP,Southern Pacific,1,1085,1087
+E0499,SC_87,SC_89,SP,Southern Pacific,1,1087,89
+E0500,SC_89,SC_90,SP,Southern Pacific,1,89,90
+E0501,SC_90,SC_91,SP,Southern Pacific,1,90,91
+E0502,SC_91,SC_92,SP,Southern Pacific,1,91,92
+E0503,SC_92,SC_93,SP,Southern Pacific,1,92,93
+E0504,SC_93,SW_5,SP,Southern Pacific,1,93,5
+E0505,SW_5,SW_6,SP,Southern Pacific,1,5,4006
+E0506,SW_6,SW_14,SP,Southern Pacific,1,4006,4014
+E0507,SW_14,SW_7,SP,Southern Pacific,1,4014,7
+E0508,SW_7,SW_8,SP,Southern Pacific,1,7,8
+E0509,SW_8,SW_9,SP,Southern Pacific,1,8,9
+E0510,SW_9,SW_2,SP,Southern Pacific,1,9,2
+E0511,SC_51,SC_74,SP,Southern Pacific,2,51,74
+E0512,SC_74,SC_80,SP,Southern Pacific,2,74,80
+E0513,SC_80,SC_85,SP,Southern Pacific,2,80,85
+E0514,SW_14,SW_15,SP,Southern Pacific,3,1014,15
+E0515,SW_15,SW_17,SP,Southern Pacific,3,15,17
+E0516,SW_17,SW_36,SP,Southern Pacific,3,17,36
+E0517,SW_36,SW_37,SP,Southern Pacific,3,36,37
+E0518,SW_37,SW_38,SP,Southern Pacific,3,37,38
+E0519,SW_38,SW_39,SP,Southern Pacific,3,38,39
+E0520,SW_39,SW_40,SP,Southern Pacific,3,39,40
+E0521,SW_40,SW_35,SP,Southern Pacific,3,40,35
+E0522,SW_35,SW_43,SP,Southern Pacific,3,35,1043
+E0523,SW_43,SW_68,SP,Southern Pacific,3,1043,1068
+E0524,SW_68,SW_46,SP,Southern Pacific,3,1068,46
+E0525,SW_46,SW_47,SP,Southern Pacific,3,46,47
+E0526,SW_47,SW_48,SP,Southern Pacific,3,47,48
+E0527,SW_48,SW_67,SP,Southern Pacific,3,48,67
+E0528,SW_67,SW_66,SP,Southern Pacific,3,67,66
+E0529,SW_66,SW_65,SP,Southern Pacific,3,66,65
+E0530,SW_65,SW_64,SP,Southern Pacific,3,65,64
+E0531,SW_64,SW_69,SP,Southern Pacific,3,64,69
+E0532,SW_69,SW_62,SP,Southern Pacific,3,69,62
+E0533,SW_62,SW_63,SP,Southern Pacific,3,62,63
+E0534,SW_63,NW_77,SP,Southern Pacific,3,63,77
+E0535,NW_77,NW_78,SP,Southern Pacific,3,77,78
+E0536,NW_78,NW_79,SP,Southern Pacific,3,78,79
+E0537,NW_79,NW_80,SP,Southern Pacific,3,79,80
+E0538,NW_80,NW_81,SP,Southern Pacific,3,80,81
+E0539,SW_69,SW_57,SP,Southern Pacific,4,69,57
+E0540,SW_57,SW_56,SP,Southern Pacific,4,57,56
+E0541,SW_56,SW_55,SP,Southern Pacific,4,56,55
+E0542,SW_55,SW_54,SP,Southern Pacific,4,55,54
+E0543,SW_54,SW_53,SP,Southern Pacific,4,54,1053
+E0544,SW_53,SW_52,SP,Southern Pacific,4,1053,1052
+E0545,SW_52,NW_63,SP,Southern Pacific,4,1052,63
+E0546,NW_63,NW_60,SP,Southern Pacific,4,63,60
+E0547,PL_94,PL_84,D+RGW,Denver and Rio Grande Western,1,1094,1084
+E0548,PL_84,PL_74,D+RGW,Denver and Rio Grande Western,1,1084,1074
+E0549,PL_74,PL_75,D+RGW,Denver and Rio Grande Western,1,1074,75
+E0550,PL_75,PL_76,D+RGW,Denver and Rio Grande Western,1,75,76
+E0551,PL_94,PL_85,D+RGW,Denver and Rio Grande Western,2,1094,85
+E0552,PL_85,PL_86,D+RGW,Denver and Rio Grande Western,2,85,86
+E0553,PL_86,PL_76,D+RGW,Denver and Rio Grande Western,2,86,76
+E0554,PL_76,SW_19,D+RGW,Denver and Rio Grande Western,2,76,19
+E0555,SW_19,SW_20,D+RGW,Denver and Rio Grande Western,2,19,20
+E0556,SW_20,SW_21,D+RGW,Denver and Rio Grande Western,2,20,21
+E0557,SW_21,SW_22,D+RGW,Denver and Rio Grande Western,2,21,22
+E0558,SW_22,NW_61,D+RGW,Denver and Rio Grande Western,2,22,1061
+E0559,NW_61,NW_60,D+RGW,Denver and Rio Grande Western,2,1061,1060
+E0560,NC_38,NC_45,CRI+P,"Chicago, Rock Island, and Pacific",1,38,2045
+E0561,NC_45,PL_7,CRI+P,"Chicago, Rock Island, and Pacific",1,2045,7
+E0562,PL_7,PL_10,CRI+P,"Chicago, Rock Island, and Pacific",1,7,10
+E0563,PL_10,PL_23,CRI+P,"Chicago, Rock Island, and Pacific",1,10,23
+E0564,PL_23,PL_57,CRI+P,"Chicago, Rock Island, and Pacific",1,23,57
+E0565,PL_57,PL_59,CRI+P,"Chicago, Rock Island, and Pacific",1,57,2059
+E0566,PL_59,PL_119,CRI+P,"Chicago, Rock Island, and Pacific",1,2059,2119
+E0567,PL_119,PL_67,CRI+P,"Chicago, Rock Island, and Pacific",1,2119,2067
+E0568,PL_67,PL_79,CRI+P,"Chicago, Rock Island, and Pacific",1,2067,79
+E0569,PL_79,PL_80,CRI+P,"Chicago, Rock Island, and Pacific",1,79,80
+E0570,PL_80,PL_81,CRI+P,"Chicago, Rock Island, and Pacific",1,80,81
+E0571,PL_81,PL_82,CRI+P,"Chicago, Rock Island, and Pacific",1,81,82
+E0572,PL_82,PL_83,CRI+P,"Chicago, Rock Island, and Pacific",1,82,83
+E0573,PL_83,PL_84,CRI+P,"Chicago, Rock Island, and Pacific",1,83,1084
+E0574,PL_1,PL_3,CRI+P,"Chicago, Rock Island, and Pacific",2,1,3
+E0575,PL_3,PL_4,CRI+P,"Chicago, Rock Island, and Pacific",2,3,4
+E0576,PL_4,PL_24,CRI+P,"Chicago, Rock Island, and Pacific",2,4,24
+E0577,PL_24,PL_23,CRI+P,"Chicago, Rock Island, and Pacific",2,24,23
+E0578,PL_23,PL_22,CRI+P,"Chicago, Rock Island, and Pacific",2,23,22
+E0579,PL_22,PL_21,CRI+P,"Chicago, Rock Island, and Pacific",2,22,21
+E0580,PL_21,PL_20,CRI+P,"Chicago, Rock Island, and Pacific",2,21,1020
+E0581,PL_20,PL_77,CRI+P,"Chicago, Rock Island, and Pacific",2,1020,1077
+E0582,PL_77,PL_78,CRI+P,"Chicago, Rock Island, and Pacific",2,1077,78
+E0583,PL_78,PL_79,CRI+P,"Chicago, Rock Island, and Pacific",2,78,79
+E0584,PL_77,PL_88,CRI+P,"Chicago, Rock Island, and Pacific",3,1077,88
+E0585,PL_88,PL_96,CRI+P,"Chicago, Rock Island, and Pacific",3,88,96
+E0586,PL_96,PL_103,CRI+P,"Chicago, Rock Island, and Pacific",3,96,103
+E0587,PL_103,PL_104,CRI+P,"Chicago, Rock Island, and Pacific",3,103,104
+E0588,PL_104,SC_65,CRI+P,"Chicago, Rock Island, and Pacific",3,104,65
+E0589,SC_65,SC_66,CRI+P,"Chicago, Rock Island, and Pacific",3,65,66
+E0590,SC_66,SW_2,CRI+P,"Chicago, Rock Island, and Pacific",3,66,2
+E0591,SW_2,SC_68,CRI+P,"Chicago, Rock Island, and Pacific",4,2,68
+E0592,SC_68,SC_64,CRI+P,"Chicago, Rock Island, and Pacific",4,68,64
+E0593,SC_64,PL_118,CRI+P,"Chicago, Rock Island, and Pacific",4,64,118
+E0594,PL_118,PL_117,CRI+P,"Chicago, Rock Island, and Pacific",4,118,117
+E0595,PL_117,PL_116,CRI+P,"Chicago, Rock Island, and Pacific",4,117,116
+E0596,PL_116,SC_60,CRI+P,"Chicago, Rock Island, and Pacific",4,116,1060
+E0597,SC_60,SC_59,CRI+P,"Chicago, Rock Island, and Pacific",4,1060,1059
+E0598,PL_88,PL_95,CRI+P,"Chicago, Rock Island, and Pacific",5,88,95
+E0599,PL_95,PL_102,CRI+P,"Chicago, Rock Island, and Pacific",5,95,102
+E0600,PL_102,PL_109,CRI+P,"Chicago, Rock Island, and Pacific",5,102,109
+E0601,PL_109,PL_117,CRI+P,"Chicago, Rock Island, and Pacific",5,109,117
+E0602,PL_117,PL_113,CRI+P,"Chicago, Rock Island, and Pacific",5,117,113
+E0603,PL_113,PL_112,CRI+P,"Chicago, Rock Island, and Pacific",5,113,112
+E0604,PL_112,PL_110,CRI+P,"Chicago, Rock Island, and Pacific",5,112,110
+E0605,PL_110,SC_48,CRI+P,"Chicago, Rock Island, and Pacific",5,110,48
+E0606,SC_48,SC_42,CRI+P,"Chicago, Rock Island, and Pacific",5,48,42
+E0607,SC_42,SC_37,CRI+P,"Chicago, Rock Island, and Pacific",5,42,37
+E0608,SC_37,SC_22,CRI+P,"Chicago, Rock Island, and Pacific",5,37,22
+E0609,PL_59,PL_60,UP,Union Pacific,1,59,60
+E0610,PL_60,PL_68,UP,Union Pacific,1,60,68
+E0611,PL_68,PL_62,UP,Union Pacific,1,68,62
+E0612,PL_62,PL_63,UP,Union Pacific,1,62,63
+E0613,PL_63,NW_8,UP,Union Pacific,1,63,8
+E0614,NW_8,NW_12,UP,Union Pacific,1,8,1012
+E0615,NW_12,PL_74,UP,Union Pacific,1,1012,1074
+E0616,PL_20,PL_77,UP,Union Pacific,2,2020,2077
+E0617,PL_77,PL_66,UP,Union Pacific,2,2077,66
+E0618,PL_66,PL_67,UP,Union Pacific,2,66,67
+E0619,PL_67,PL_68,UP,Union Pacific,2,67,68
+E0620,NW_12,NW_14,UP,Union Pacific,3,1012,14
+E0621,NW_14,NW_17,UP,Union Pacific,3,14,17
+E0622,NW_17,NW_28,UP,Union Pacific,3,17,28
+E0623,NW_28,NW_59,UP,Union Pacific,3,28,59
+E0624,NW_59,NW_57,UP,Union Pacific,3,59,57
+E0625,NW_57,NW_55,UP,Union Pacific,3,57,55
+E0626,NW_55,NW_54,UP,Union Pacific,3,55,54
+E0627,NW_54,NW_53,UP,Union Pacific,3,54,53
+E0628,NW_53,NW_52,UP,Union Pacific,3,53,52
+E0629,NW_52,NW_51,UP,Union Pacific,3,52,1051
+E0630,NW_59,NW_58,UP,Union Pacific,4,59,58
+E0631,NW_58,NW_60,UP,Union Pacific,4,58,2060
+E0632,NW_60,NW_61,UP,Union Pacific,4,2060,2061
+E0633,NW_61,SW_23,UP,Union Pacific,4,2061,23
+E0634,SW_23,SW_24,UP,Union Pacific,4,23,24
+E0635,SW_24,SW_25,UP,Union Pacific,4,24,25
+E0636,SW_25,SW_26,UP,Union Pacific,4,25,26
+E0637,SW_26,SW_27,UP,Union Pacific,4,26,27
+E0638,SW_27,SW_33,UP,Union Pacific,4,27,33
+E0639,SW_33,SW_44,UP,Union Pacific,4,33,2044
+E0640,SW_44,SW_43,UP,Union Pacific,4,2044,2043
+E0641,SW_43,SW_68,UP,Union Pacific,4,2043,2068
+E0642,NW_60,NW_56,UP,Union Pacific,5,2060,56
+E0643,NW_56,NW_55,UP,Union Pacific,5,56,55
+E0644,NW_55,NW_64,UP,Union Pacific,5,55,64
+E0645,NW_64,NW_65,UP,Union Pacific,5,64,65
+E0646,NW_65,NW_66,UP,Union Pacific,5,65,66
+E0647,NW_66,NW_67,UP,Union Pacific,5,66,67
+E0648,NW_67,NW_68,UP,Union Pacific,5,67,68
+E0649,NW_68,NW_69,UP,Union Pacific,5,68,69
+E0650,NW_69,NW_70,UP,Union Pacific,5,69,1070
+E0651,NW_70,NW_72,UP,Union Pacific,5,1070,1072
+E0652,NW_72,NW_81,UP,Union Pacific,5,1072,1081
+E0653,NW_61,NW_62,WP,Western Pacific,1,61,62
+E0654,NW_62,SW_52,WP,Western Pacific,1,62,3052
+E0655,SW_52,SW_53,WP,Western Pacific,1,3052,3053
+E0656,SW_53,SW_58,WP,Western Pacific,1,3053,58
+E0657,SW_58,SW_59,WP,Western Pacific,1,58,59
+E0658,SW_59,SW_55,WP,Western Pacific,1,59,55
+E0659,SW_59,SW_70,WP,Western Pacific,2,59,70
+E0660,SW_70,SW_60,WP,Western Pacific,2,70,60
+E0661,SW_60,NW_76,WP,Western Pacific,2,60,76
+E0662,SW_70,SW_61,WP,Western Pacific,3,70,61
+E0663,SW_61,SW_57,WP,Western Pacific,3,61,57
+E0664,SW_57,SW_51,WP,Western Pacific,3,57,2051
+E0665,SW_51,SW_65,WP,Western Pacific,3,2051,2065
+E0666,SC_17,SC_95,SLSF,St. Louis and San Francisco,1,17,95
+E0667,SC_95,SC_23,SLSF,St. Louis and San Francisco,1,95,23
+E0668,SC_23,SC_22,SLSF,St. Louis and San Francisco,1,23,22
+E0669,SC_22,SC_36,SLSF,St. Louis and San Francisco,1,22,36
+E0670,SC_36,NC_58,SLSF,St. Louis and San Francisco,1,36,58
+E0671,NC_58,NC_56,SLSF,St. Louis and San Francisco,1,58,56
+E0672,NC_56,PL_14,SLSF,St. Louis and San Francisco,1,56,14
+E0673,PL_14,PL_16,SLSF,St. Louis and San Francisco,1,14,16
+E0674,PL_16,PL_19,SLSF,St. Louis and San Francisco,1,16,19
+E0675,PL_19,PL_20,SLSF,St. Louis and San Francisco,1,19,5020
+E0676,NC_52,NC_53,SLSF,St. Louis and San Francisco,2,52,53
+E0677,NC_53,NC_55,SLSF,St. Louis and San Francisco,2,53,55
+E0678,NC_55,PL_14,SLSF,St. Louis and San Francisco,2,55,14
+E0679,PL_14,PL_15,SLSF,St. Louis and San Francisco,2,14,15
+E0680,PL_15,PL_100,SLSF,St. Louis and San Francisco,2,15,100
+E0681,PL_100,PL_107,SLSF,St. Louis and San Francisco,2,100,107
+E0682,PL_107,PL_113,SLSF,St. Louis and San Francisco,2,107,113
+E0683,PL_15,SC_47,SLSF,St. Louis and San Francisco,3,15,47
+E0684,SC_47,PL_110,SLSF,St. Louis and San Francisco,3,47,110
+E0685,PL_110,PL_111,SLSF,St. Louis and San Francisco,3,110,111
+E0686,PL_111,SC_56,SLSF,St. Louis and San Francisco,3,111,56
+E0687,SC_56,SC_58,SLSF,St. Louis and San Francisco,3,56,2058
+E0688,SC_58,SC_59,SLSF,St. Louis and San Francisco,3,2058,2059
+E0689,PL_1,PL_27,NP,Northern Pacific,1,3001,3027
+E0690,PL_27,PL_28,NP,Northern Pacific,1,3027,28
+E0691,PL_28,PL_29,NP,Northern Pacific,1,28,29
+E0692,PL_29,PL_34,NP,Northern Pacific,1,29,34
+E0693,PL_34,PL_35,NP,Northern Pacific,1,34,35
+E0694,PL_35,PL_36,NP,Northern Pacific,1,35,36
+E0695,PL_36,PL_37,NP,Northern Pacific,1,36,37
+E0696,PL_37,NW_3,NP,Northern Pacific,1,37,3
+E0697,NW_3,NW_83,NP,Northern Pacific,1,3,83
+E0698,NW_83,NW_2,NP,Northern Pacific,1,83,2
+E0699,NW_83,NW_19,NP,Northern Pacific,2,83,1019
+E0700,NW_19,NW_20,NP,Northern Pacific,2,1019,1020
+E0701,NW_20,NW_26,NP,Northern Pacific,2,1020,26
+E0702,NW_26,NW_86,NP,Northern Pacific,2,26,86
+E0703,NW_86,NW_85,NP,Northern Pacific,2,86,85
+E0704,NW_85,NW_51,NP,Northern Pacific,2,85,1051
+E0705,NW_51,NW_46,NP,Northern Pacific,2,1051,3046
+E0706,NW_46,NW_47,NP,Northern Pacific,2,3046,47
+E0707,NW_47,NW_49,NP,Northern Pacific,2,47,49
+E0708,NW_49,NW_35,NP,Northern Pacific,2,49,1035
+E0709,NW_35,NW_36,NP,Northern Pacific,2,1035,1036
+E0710,NW_36,NW_38,NP,Northern Pacific,2,1036,1038
+E0711,NW_38,NW_71,NP,Northern Pacific,2,1038,71
+E0712,NW_71,NW_40,NP,Northern Pacific,2,71,4040
+E0713,NW_40,NW_42,NP,Northern Pacific,2,4040,4042
+E0714,NW_42,NW_82,NP,Northern Pacific,2,4042,82
+E0715,NW_82,NW_81,NP,Northern Pacific,2,82,81
+E0716,PL_1,PL_27,GN,Great Northern,1,4001,4027
+E0717,PL_27,PL_38,GN,Great Northern,1,4027,38
+E0718,PL_38,PL_29,GN,Great Northern,1,38,29
+E0719,PL_29,PL_30,GN,Great Northern,1,29,30
+E0720,PL_30,PL_31,GN,Great Northern,1,30,31
+E0721,PL_31,PL_32,GN,Great Northern,1,31,32
+E0722,PL_32,PL_33,GN,Great Northern,1,32,33
+E0723,PL_33,NW_1,GN,Great Northern,1,33,1
+E0724,NW_1,NW_2,GN,Great Northern,1,1,2
+E0725,NW_1,NW_21,GN,Great Northern,2,1,21
+E0726,NW_21,NW_22,GN,Great Northern,2,21,22
+E0727,NW_22,NW_23,GN,Great Northern,2,22,23
+E0728,NW_23,NW_30,GN,Great Northern,2,23,30
+E0729,NW_30,NW_31,GN,Great Northern,2,30,31
+E0730,NW_31,NW_44,GN,Great Northern,2,31,44
+E0731,NW_44,NW_45,GN,Great Northern,2,44,45
+E0732,NW_45,NW_51,GN,Great Northern,2,45,1051
+E0733,NW_31,NW_32,GN,Great Northern,3,31,32
+E0734,NW_32,NW_33,GN,Great Northern,3,32,33
+E0735,NW_33,NW_34,GN,Great Northern,3,33,34
+E0736,NW_34,NW_35,GN,Great Northern,3,34,2035
+E0737,NW_35,NW_36,GN,Great Northern,3,2035,36
+E0738,NW_36,NW_39,GN,Great Northern,3,36,39
+E0739,NW_39,NW_41,GN,Great Northern,3,39,41
+E0740,NW_41,NW_42,GN,Great Northern,3,41,42
+E0741,NW_36,NW_37,GN,Great Northern,4,1036,37
+E0742,NW_37,NW_70,GN,Great Northern,4,37,3070
+E0743,NW_70,NW_72,GN,Great Northern,4,3070,3072
+E0744,NW_72,NW_81,GN,Great Northern,4,3072,3081
+E0745,NW_72,NW_73,GN,Great Northern,5,72,73
+E0746,NW_73,NW_74,GN,Great Northern,5,73,74
+E0747,NW_74,NW_75,GN,Great Northern,5,74,75
+E0748,NW_75,NW_76,GN,Great Northern,5,75,76
