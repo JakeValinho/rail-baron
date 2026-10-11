@@ -53,7 +53,7 @@ def test_rolls_follow_the_exact_odds(dest):
     chicago = dest.index("Chicago")
     n = 200_000
     counts = Counter(dest.roll_destination(chicago, None, rand) for _ in range(n))
-    assert counts[chicago] == 0  # your own city is rolled again
+    assert counts[chicago] > 0   # your own city can come up: that is a lost turn
     for city, p in enumerate(dest.destination_odds(chicago)):
         assert counts[city] / n == pytest.approx(p, abs=0.004)
     assert sum(dest.destination_odds(chicago)) == pytest.approx(1.0)
@@ -73,10 +73,11 @@ def test_region_choice_moves_home_region_rolls(dest):
     assert REGIONS.index("NC") not in rolls
 
 
-def test_twin_cities_share_a_dot_and_are_rerolled(dest):
+def test_twin_cities_share_a_dot_and_pay_nothing_between_them(dest):
     mpls, stp = dest.index("Minneapolis"), dest.index("St. Paul")
     assert dest.dot[mpls] == dest.dot[stp]
-    assert dest.destination_odds(mpls)[stp] == 0
+    assert dest.payoff[mpls][stp] == 0
+    assert dest.destination_odds(mpls)[stp] > 0
 
 
 def test_batches_match_exact_odds(dest):
@@ -88,7 +89,6 @@ def test_batches_match_exact_odds(dest):
 
     cities, payoffs = dest.sample_trips(20_000, 30, seed=5)
     assert cities.shape == payoffs.shape == (20_000, 30)
-    assert (cities[:, 1:] != cities[:, :-1]).all()
     assert payoffs[0, 1] == dest.payoff[cities[0, 0]][cities[0, 1]]
     _, per_trip = dest.long_run()
     assert payoffs[:, 10:].mean() == pytest.approx(per_trip, rel=0.01)

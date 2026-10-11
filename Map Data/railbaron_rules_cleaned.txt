@@ -1,0 +1,633 @@
+RAIL BARON
+THE AVALON HILL GAME COMPANY'S TRADEMARK FOR ITS EMPIRE BUILDING GAME
+
+Clean transcription of the supplied four-page rulebook scan. Original rule language preserved where
+possible; OCR artifacts and layout errors corrected.
+
+GAME COMPONENTS
+---------------
+
+  - Mapboard of the United States
+  - Rulebook and Destination Chart (on back of rulebook)
+  - Payoff Chart
+  - 28 Rail Line Title Cards
+  - 6 EXPRESS Title Cards
+  - 6 SUPERCHIEF Title Cards
+  - 6 sets of colored tokens, each set having one pawn and two matching chips
+  - 2 white dice and 1 colored die
+  - Play Money
+
+THE MAPBOARD
+------------
+
+The mapboard portrays the 28 major rail lines and the major cities they connected in the United States
+during the great days of railroading. Each rail line company is represented by its own distinctive set
+of lines, running from dot to dot; the Pennsylvania RR is represented by reddish sawtooth lines, for
+example. The players move by moving their pawns along these rail lines from dot to dot.
+
+The square “dots” represent the major cities where the players start and end their trips (the paired
+squares, Oakland-San Francisco, and Minneapolis-St. Paul, represent twin cities—each pair is counted as
+one city in the game).
+
+The round dots are smaller towns and rail junctions that the players use for movement. Each player
+rolls the dice and moves the number of dots he rolls.
+
+The board has been divided into seven “Regions” (labelled NORTHEAST to SOUTHWEST), each tinted a
+different color.
+
+STARTING THE GAME
+-----------------
+
+At the start of the game, each player is given $20,000 in cash, and one pawn and two chips of the same
+color. The pawn is his “train” that he will move from dot to dot; the chips are used to keep track of
+the city that he starts each trip from and the destination city that he is heading for. All Title Cards
+and remaining money are placed in the Bank.
+
+The players roll to see who will go first, the high roller starting the game. Play proceeds to each
+player's left, clockwise around the board.
+
+Before the start of play, each player rolls twice and consults the DESTINATION TABLE to determine the
+region and city where he will start the game (see ROLLING FOR DESTINATIONS, below). This city is his
+“home city” for that game; he places his pawn and chips there at the start, and he should write it down
+on a piece of scrap paper since he will have to return to that city at the end of the game to win.
+
+As soon as all the players have home cities, the first player rolls to find his first destination, and
+starts his first trip.
+
+(If two players roll the same home city, the second player must roll again for region and city to find
+a new home city—no players can have the same home city.)
+
+ROLLING FOR DESTINATIONS
+------------------------
+
+Each player must roll for a destination each time he starts a new trip (he does not roll at the end of
+the old trip; instead, he must wait until just before he starts moving on his new trip).
+
+The player uses the DESTINATION TABLE to determine what city is his next destination. The DESTINATION
+TABLE is divided into eight small charts, one chart labelled REGIONS and the other seven charts named
+after the seven regions on the mapboard. To find his next destination, the player must first roll all
+three dice and consult the REGIONS chart to see which region on the board he is going to; then he must
+roll again and consult the chart for that region to pinpoint exactly which city in that region he must
+go to. He should put one of his chips on his destination city to remind himself where he is going (and
+leave the other chip on his starting city.)
+
+How to use the charts
+
+The player must roll all three dice. Each small chart is divided into two columns labelled ‘odd’ and
+“even” and into eleven rows numbered "2" through “12”. To find his destination, the player must look in
+the column indicated by the colored die and in the row indicated by the total rolled on the white dice.
+If the colored die comes up 1, 3 or 5, he looks in the “odd” column; if it comes up 2, 4 or 6, he looks
+in the “even” column; then he runs down that column until he comes to the row with the same total
+number that he rolled on the white dice (so if the white dice totalled 7, he would look in the “7”
+row). The entry that is found by this cross-indexing is that player's next destination.
+
+Special: Choosing a REGION
+
+If a player rolls the same region that his pawn is already in (when he is rolling and consulting the
+REGIONS chart), he does not have to go to that region. Instead, he may choose any region on the board
+for his next destination. He cannot choose a particular city; he must choose just the region, and then
+roll again on that region's chart to determine the exact city he must go to.
+
+Once a player has chosen a region and found his destination city, he cannot change his mind—he must go
+to that city. If he is already in the city he rolls, then he loses his turn that round.
+
+MOVING
+------
+
+When it is his turn, a player moves by rolling the two white dice (not the colored die) and immediately
+moving his pawn along the rail lines on the board for the number of dots that he rolled. Once he has
+rolled he cannot pause to count dots or check routes—he must start moving immediately. To move from one
+dot to another dot, the pawn must move along a rail line that runs between those two dots; if more than
+one rail line runs between those two dots, the player must announce which rail line his “train” is
+using. The player may never take back any part of his move once he has moved his pawn—he is committed
+to using the first route his pawn uses! The player may choose his route and change it from turn to
+turn, but he must follow the rail lines and obey the rules below:
+
+Special: Once a pawn has used a rail line to move from one dot to another dot it cannot use that same
+rail line to move between those same two dots until after it has arrived at its next destination. In
+other words, each section of rail can be used only once per trip. The pawn can move through either or
+both of the dots again, and it can even move from one of the dots to the other again, as long as it
+uses a different rail line each time it moves between the dots. As soon as the pawn arrives at its
+destination city it can use all of the rail sections on the board again, on its next trip. (Note: it is
+against the rules for a pawn to move in such a way that it is “trapped”, unable to get to its
+destination city. If moving to a particular dot would mean that the pawn could not get to its
+destination city without going over the same rail section twice, then the pawn cannot move to that
+particular dot—it must move to some other dot.)
+
+During his move, a player may change rail lines any number of times, but he can change rail lines only
+at a dot. In other words, if a train pawn is on one rail line when it leaves a dot, it must stay on
+that rail line until it reaches the next dot; only then can it change to another rail line.
+
+[Diagram on page 1: allowed and not allowed movements at intersecting rail lines.]
+
+In certain places on the board, rail line(s) of the same or different rail line companies intersect
+other than at a dot. As long as the token travels along the rail line of the same company it may change
+lines at this type of intersection. It may never switch from a rail line of one company to a rail line
+of another company except at a dot.
+
+Cities (black squares) count as dots; each pair of twin cities (Oakland-San Francisco, Minneapolis-St.
+Paul) count as one dot for the pair.
+
+A player must always move the full number of dots that he rolls, whether he wants to or not, until he
+arrives at his destination city. As soon as his pawn reaches its destination city, it must stop
+immediately—any extra movement is just lost.
+
+If a pawn arrives at its destination during its turn the player immediately collects his payoff and has
+the opportunity to make one purchase from the bank (see PAYOFFS and PURCHASING, below.)
+
+When the player has finished moving (and collected his payoff and made his purchase, if he arrived at
+his destination during his turn), it is the end of his normal turn.
+
+The Bonus Roll: Depending on what he rolls on the white dice during his normal turn, a player may be
+entitled to a Bonus Roll after he has finished his normal turn. A player is entitled to a Bonus Roll
+after his normal turn if either:
+
+  1) He rolled “boxcars” (two 6's) on the white dice during his normal turn; or
+
+  2) He owned an EXPRESS and he rolled any doubles during his normal turn; or
+
+  3) He owned a SUPERCHIEF when he rolled the dice during his normal turn. (So a player with a
+    SUPERCHIEF gets a Bonus Roll every turn.)
+
+The colored die is rolled once for a Bonus Roll. The player must move his pawn the number of dots he
+rolls on the colored die, and he must abide by all of the normal rules for movement—he may not move
+along a section of rail line he has already used this trip, he must move the full number of dots he
+rolls (unless he arrives at his destination), and so on. If the player arrived at his destination
+during his normal turn, then he must find a new destination and use the Bonus Roll to start his next
+trip. If the Bonus Roll brings him to his destination, he immediately collects his PAYOFF and has a
+chance to buy from the Bank.
+
+A player can get no more than one Bonus Roll per turn, no matter what he rolls and what he owns. If he
+is entitled to a Bonus roll he must take it.
+
+USER FEES
+---------
+
+At the end of your turn, you must pay for the rail lines that your pawn used that turn. You pay only
+for the rail lines that your pawn used to move from dot to dot. How much you pay, and who you pay,
+depends on who owned the rail lines when your pawn used them.
+
+  1) You must pay the Bank $1000 if your pawn moved along any rail lines that you own or that the Bank
+    owns. You pay only $1000 per turn, no matter how many of your own and the Bank’s rail lines you
+    used that turn. If you do not use any of your own or the Bank’s rail lines, then you do not have to
+    pay the $1000.
+
+  2) You must pay $5000 to each player who owned a rail line that your pawn moved along that turn. If
+    your pawn moved along rail lines belonging to two players, then you must pay each of them $5000.
+    You must pay that player $5000 only once per turn, no matter how many of his rail lines you use
+    that turn; one payment of $5000 allows you to use all of that player's rail lines that turn.
+
+  3) As soon as all of the rail lines have been bought, the $5000 penalty goes up to $10,000 for the
+    rest of the game. After all the rail lines have been bought, you must pay $10,000 to a player if
+    you used any of his rail lines that turn (This $10,000 penalty remains in effect even if rail lines
+    are sold back to the Bank later in the game: once all the rail lines have been bought, the penalty
+    is $10,000 for the rest of the game.)
+
+  4) Special: If the penalty for using a rail line goes up while you are on a dot that that rail line
+    runs into, then you are “established” on that rail line and continue to pay the old penalty for as
+    long as you continue to use that rail line. As soon as you use another rail line to move from dot
+    to dot, however, you are no longer “established” and you must pay the new, full penalty to use that
+    rail line after that.
+
+Example A: Your pawn is on New York Central, which nobody owns; to use it you pay $1000 to the Bank.
+Then some other player buys New York Central while you are on it. As long as you stay on it, and do not
+use any other rail line, you continue to pay only $1000 per turn to use it, instead of $5000 (you must
+pay the $1000 to the owner, not to the Bank, however). If you use another rail line and then use New
+York Central again later—even later the same turn—you must pay the full $5000 penalty.
+
+Example B: You are on GM & O, which another player owns, so the penalty for using it is $5000. Then
+somebody buys the last rail line, so the penalty for using GM & O goes up to $10,000. Since you were on
+it when the penalty went up, you can continue to use it and pay only $5000, as long as you do not use
+any other rail line.
+
+You can pay no more than one penalty to each player on the same turn—so if you move along a rail line
+that you are “established” on, and then move along a new rail line that is owned by the same player,
+you pay that player only one penalty—the $5000 (or $10,000) penalty to use all his rail lines.
+
+You must pay a separate penalty to each player whose lines you used that turn, and in addition, you
+must pay the Bank if you used your own or the Bank's rail lines.
+
+You must pay all your penalties. If you do not have enough money, you must sell a rail line (see
+SELLING, below) and keep selling until you have enough money. If you don’t have any rail lines and
+cannot pay your penalties, you are out of the game!
+
+SELLING
+-------
+
+If at the end of his turn a player does not have enough money to pay all his penalty fines, then he
+must sell one (or more) of his rail lines. This is the only time in the game that a player is allowed
+to sell anything he has bought; he may never sell a SUPERCHIEF or an EXPRESS. He may never sell unless
+he does not have enough money to pay his expenses.
+
+A player who is forced to sell has two choices. He may sell any of his rail lines back to the Bank for
+half of its normal price; or he may put the rail line up for auction among the other players. In an
+auction, the bidding starts to the seller's left and proceeds clockwise around the table; the minimum
+bid is one half of the rail line’s normal price; players may bid or pass, but every bid must be a
+multiple of $500 and must be higher than the last bid. Players who pass may bid again if the auction
+comes around to them again; the auction is over as soon as all the players have passed in turn around
+the table. The highest bidder pays his bid to the selling player and takes the rail line.
+
+If nobody bids, the Bank automatically buys the card for half price. Once a player has put a rail line
+up for bid, he cannot take it back, even if nobody bids or he doesn’t want the high bidder to get it:
+he must auction it.
+
+ENDING A TRIP
+-------------
+
+Whenever a player's pawn moves onto the destination city it is heading for, the pawn must immediately
+stop (the player does not have to roll the exact number of dots to move onto the destination city—if he
+rolls higher he just moves onto it and loses the rest of that roll).
+
+As soon as his pawn arrives at its destination, the player immediately collects his PAYOFF and has the
+opportunity to make one purchase from the Bank.
+
+PAYOFFS
+-------
+
+As soon as he arrives at his destination, the player collects a cash PAYOFF. The player uses the PAYOFF
+CHART to determine how much money he receives for that trip; the amount of money depends on where the
+trip started and where the trip ended. The player reads across the top of the PAYOFF CHART until he
+finds the column for the city where he started the trip (he should have left one of his colored chips
+in that city at the start of the trip, to help him remember). Then he reads down the chart until he
+comes to the row for the destination city he has arrived at. The number at the intersection of that
+column and that row is the amount of money he collects (the number is given in thousands of dollars,
+and .5 is $500; so a payoff of “25.5” would be $25,500).
+
+After he has collected his payoff, the player should move both chips to his destination city, in
+preparation for his next trip.
+
+PURCHASING
+----------
+
+As soon as he has collected his PAYOFF, the player immediately has the chance to purchase one item from
+the Bank. This is the only time that a player may purchase from the Bank—just after he has collected a
+PAYOFF— and he may buy only one item per PAYOFF. He must complete another trip and collect another
+PAYOFF before he can buy another item.
+
+A player can buy either a rail line (if the Bank owns any), an EXPRESS, or a SUPERCHIEF (if he does not
+already own one). If he buys anything, he takes the appropriate title card—either a rail line title
+card, or the EXPRESS or SUPERCHIEF title card with the same color as his pawn—and pays the Bank the
+price that is printed on that card. If he does not have enough money to pay the price, then he cannot
+buy that item—he cannot sell a rail line he already owns to get the money to buy something else.
+
+(For easy reference, the rail line prices are also printed on the game board and on the back cover of
+this rule book. EXPRESSES always cost $4000, and SUPERCHIEFS cost $40,000.)
+
+If a player buys a rail line, he cannot buy anything else at the same time.
+
+SPECIAL TRAINS—EXPRESS AND SUPERCHIEF
+-------------------------------------
+
+Owning an EXPRESS or a SUPERCHIEF increases the player's chance of getting a Bonus Roll each turn. An
+EXPRESS costs $4000, and the player gets a Bonus Roll if he rolls doubles on the white dice while he
+owns it. A SUPERCHIEF costs $40,000, and the player gets a Bonus Roll every turn that he rolls the
+white dice while he owns it.
+
+A player owning neither gets a Bonus Roll only when he rolls double sixes on the white dice.
+
+A player can never get more than one Bonus Roll per turn, no matter what he owns.
+
+A player cannot “trade in” an EXPRESS on a SUPERCHIEF; a SUPERCHIEF costs full price whether the player
+owns an EXPRESS or not.
+
+“DECLARING” AND WINNING THE GAME
+--------------------------------
+
+To win, a player must return to his “home city” (the city where he started the game) with $200,000 or
+more in cash. Before a player can return to his “home city” and win, however, he must warn the other
+players by “declaring” to them, at the start of the trip, that he has $200,000 and is returning home.
+The other players then have the opportunity to try to stop him by using the “rover play” (see below). A
+player cannot win just by moving into his “home city” during a normal trip—he must “declare” in advance
+and then, moving normally, move into his home city while he still has $200,000 or more in cash.
+
+“Declaring”: To declare, a player must: 1) have $200,000 or more in cash, 2) be in his latest
+destination city, and 3) be about to roll for a new destination and start a new trip. If he meets all
+three of the above conditions, the player has the choice of “declaring” or not; however, if he does
+“declare” he must announce it before he rolls for his next destination. If he rolls for destination
+without “declaring” then he must go to his next destination—he does not have another chance to
+“declare” until he has arrived at that destination and is about to start his next trip after that.
+
+If a player is in his “home city” when he “declares” he wins immediately.
+
+Rolling for an “Alternate” Destination: When he “declares”, the player still rolls for a new
+destination, which is called his “alternate” destination. However, instead of going to this “alternate”
+destination, the player must go to his “home city” to try to win. As long as he is still able to win by
+reaching his home city, the player ignores the “alternate” destination entirely: he may move right
+through it without stopping, and he does not get any PAYOFF for reaching it.
+
+The Trip to the “Home City”: Once he has rolled for an “alternate” destination, he starts a normal
+trip, moving normally, except he is heading for his “home city”. The player must obey all the normal
+rules of movement: he cannot move along the same section of rail line twice during the same trip; he
+must pay all his fines and penalties each turn, and so on.
+
+Winning the Game: To win the game, the player must reach his “home city” with $200,000 or more in cash
+before any of the other pawns catch his pawn. The player's pawn stops immediately when it reaches its
+“home city”. He does not collect a PAYOFF for reaching his “home city” unless it is also his
+“alternate” destination that trip. If, after paying all his fines and penalties that turn, he still has
+$200,000 or more in cash, he immediately wins the game!
+
+The Rover Play: Once a player has “declared”, the first player to move onto or through a dot occupied
+by the “declared” pawn collects $50,000 from the declared player. The player who is caught pays only
+the first pawn that catches him—after that he is no longer “declared” and must go to his “alternate”
+destination instead.
+
+A player who has “declared” can move through other pawns without penalty—he is “caught” only if another
+pawn moves onto or through him during its turn.
+
+Going to the “Alternate” Destination: As soon as a “declared” player falls below $200,000 or is caught
+by another pawn, he is no longer “declared”; he is no longer headed for his “home city”, and must go to
+his “alternate” destination, instead. The interrupted trip to his “home city” and the following trip to
+his “alternate” destination count as parts of the same trip. The player may not use the same section of
+rail line twice during this trip, except: if he has no other way of getting to his ‘alternate’
+destination, he may move along sections of rail line he used while he was heading for his “home city”.
+He may not use the same rail sections twice any more than is absolutely necessary.
+
+Once he arrives in his “alternate” destination, the player collects his PAYOFF from the city where he
+“declared” to the “alternative” destination, and then, if he has $200,000 or more when he starts his
+next trip, he may “declare” and try again.
+
+RULES OF COURTESY
+-----------------
+
+A player must announce immediately he has over $150,000 in cash. If he has over $150,000 in cash, he
+must tell exactly how much he has if any of the players ask him. If he has under $150,000, he may keep
+his money amount secret.
+
+All players should always keep their property—rail lines, EXPRESS and/or SUPERCHIEF—spread out where
+all the other players can see them. When asked, a player must always tell if he owns a particular rail
+line or not.
+
+The collection of fines and penalties is not voluntary. If you use another player's lines, you must pay
+him whether he wants you to or not—and whether he sees you use them or not. You must pay.
+
+As long as you do not use the same rail section twice, or move so that you have to use the same section
+of rail line twice, you may choose any route you wish to get from city to city—it does not have to be
+the shortest route, and it does not have to be the cheapest route. You may change your mind from turn
+to turn and take different routes: however, once you have moved your pawn, you may not change your mind
+and take any part of the move back!
+
+You may count dots and trace routes when it is not your turn. As soon as you roll the dice, however,
+you must start moving immediately—no pausing to count!
+
+ANALYTICAL NOTES
+----------------
+
+The railroads depicted on the Game Board have been selected from actual railway lines in the United
+States. Of course, not all lines of the specific railways used have been shown, only some of the more
+important ones. For example, the Southern Railway extends to Jacksonville, Cincinnati, and St. Louis;
+and the Norfolk and Western now reaches Buffalo and Omaha.
+
+Mergers and other consolidations have significantly changed the railway map. Of the railroads used in
+RAIL BARON the following have been combined:
+
+1963: Chesapeake and Ohio obtained official control of Baltimore and Ohio.
+
+1967: Seaboard Air Line merged with Atlantic Coast Line to form Seaboard Coast Line Railroad Company,
+and later added Louisville and Nashville to form the Friendly System.
+
+1968: Pennsylvania Railroad merged with New York Central and later New York, New Haven and Hartford to
+form ill-fated Penn-Central Transportation Company.
+
+1970: Chicago, Burlington, and Quincy merged with Great Northern and Northern Pacific to form
+Burlington Northern.
+
+1972: Illinois Central merged with Gulf, Mobile and Ohio to form Illinois Central Gulf Railroad Company.
+
+1973: Missouri Pacific acquired Texas and Pacific.
+
+OPTIONAL RULE NO. 1
+-------------------
+
+When it is a player's turn to buy he can buy one of the groups of lines listed below and treat it as
+one purchase. If the Bank does not own the whole group he can buy the part of the group that the bank
+does own. He must pay the total price for the group whether he buys the total group or only part. The
+players can still buy the lines one at a time normally.
+
+Group: railroads included | Group name | Total price
+
+  PA, NYC, NYNH&H | Penn Central | $62,000
+  SAL, ACL, L&N | Friendly | $44,000
+  B&O, C&O | C&O | $44,000
+  CB&Q, GN, NP | Burlington Northern | $51,000
+  IC, GM&O | Illinois Gulf Central | $26,000
+  MP, T&P | MP and T&P | $31,000
+
+OPTIONAL RULE NO. 2
+-------------------
+
+In order to shorten the game when there are a lot of players, vary the price of a SUPERCHIEF. Instead
+of $40,000, charge the prices below when the following number of people are playing:
+
+Number of players | Price of SUPERCHIEF
+
+  3 | $40,000
+  4 | $36,000
+  5 | $32,000
+  6 | $28,000
+
+All other prices stay the same.
+
+OPTIONAL RULE NO. 3
+-------------------
+
+Instead of playing to $200,000 in cash the players can play to the net worth indicated on the chart
+below. Each player totals his cash on hand and the rail lines and special train(s) he owns, and when
+this total reaches the net worth indicated below he can “declare” and head back to his home city to win
+the game.
+
+A player must announce his own net worth whenever he has more than $50,000 in cash.
+
+Number of players | Net worth needed
+
+  3 | $300,000
+  4 | $250,000
+  5 | $225,000
+  6 | $200,000
+
+DESIGN CREDITS
+--------------
+
+Game Concept: R. S. Erickson
+Game Design: Thomas F. Erickson, Jr.
+Game Development: Richard Hamblen and Mick Uhl
+Playtesting: Don Greenwood, Jim Skinner, Bill Barr, Paul O’Neill, Seth Carus and members of Interest
+Group Baltimore.
+Components and Printing: Monarch Services, Inc.
+Typesetting: Colonial Composition
+
+We will answer questions about the play of this game at no charge, but only if you enclose a stamped,
+self-addressed envelope with your query.
+
+Replacement parts are available from The Avalon Hill Game Company. For a current replacement parts
+price list, send a stamped, self-addressed envelope to The Avalon Hill Game Company; 4517 Harford Road;
+Baltimore, Maryland 21214.
+
+DESTINATION TABLE (BACK OF RULEBOOK)
+------------------------------------
+
+Roll twice to find your DESTINATION. First roll and consult the REGIONS chart to find the region, then roll again and consult the chart for that region to pinpoint the destination city.
+
+REGION
+
+Dice  ODD                  EVEN
+
+2     PLAINS               SOUTHWEST
+3     SOUTHEAST            SOUTH CENTRAL
+4     SOUTHEAST            SOUTH CENTRAL
+5     SOUTHEAST            SOUTH CENTRAL
+6     NORTH CENTRAL        SOUTHWEST
+7     NORTH CENTRAL        SOUTHWEST
+8     NORTHEAST            PLAINS
+9     NORTHEAST            NORTHWEST
+10    NORTHEAST            NORTHWEST
+11    NORTHEAST            PLAINS
+12    NORTHEAST            NORTHWEST
+
+NORTHEAST
+
+Dice  ODD                  EVEN
+
+2     NEW YORK             NEW YORK
+3     NEW YORK             WASHINGTON
+4     NEW YORK             PITTSBURGH
+5     ALBANY               PITTSBURGH
+6     BOSTON               PHILADELPHIA
+7     BUFFALO              WASHINGTON
+8     BOSTON               PHILADELPHIA
+9     PORTLAND             BALTIMORE
+10    NEW YORK             BALTIMORE
+11    NEW YORK             BALTIMORE
+12    NEW YORK             NEW YORK
+
+SOUTHEAST
+
+Dice  ODD                  EVEN
+
+2     CHARLOTTE            NORFOLK
+3     CHARLOTTE            NORFOLK
+4     CHATTANOOGA          NORFOLK
+5     ATLANTA              CHARLESTON
+6     ATLANTA              MIAMI
+7     ATLANTA              JACKSONVILLE
+8     RICHMOND             MIAMI
+9     KNOXVILLE            TAMPA
+10    MOBILE               TAMPA
+11    KNOXVILLE            MOBILE
+12    MOBILE               NORFOLK
+
+NORTH CENTRAL
+
+Dice  ODD                  EVEN
+
+2     CLEVELAND            CINCINNATI
+3     CLEVELAND            CHICAGO
+4     CLEVELAND            CINCINNATI
+5     CLEVELAND            CINCINNATI
+6     DETROIT              COLUMBUS
+7     DETROIT              CHICAGO
+8     INDIANAPOLIS         CHICAGO
+9     MILWAUKEE            ST LOUIS
+10    MILWAUKEE            ST LOUIS
+11    CHICAGO              ST LOUIS
+12    MILWAUKEE            CHICAGO
+
+SOUTH CENTRAL
+
+Dice  ODD                  EVEN
+
+2     MEMPHIS              SHREVEPORT
+3     MEMPHIS              SHREVEPORT
+4     MEMPHIS              DALLAS
+5     LITTLE ROCK          NEW ORLEANS
+6     NEW ORLEANS          DALLAS
+7     BIRMINGHAM           SAN ANTONIO
+8     LOUISVILLE           HOUSTON
+9     NASHVILLE            HOUSTON
+10    NASHVILLE            FORT WORTH
+11    LOUISVILLE           FORT WORTH
+12    MEMPHIS              FORT WORTH
+
+PLAINS
+
+Dice  ODD                  EVEN
+
+2     KANSAS CITY          OKLAHOMA CITY
+3     KANSAS CITY          ST PAUL
+4     DENVER               MINNEAPOLIS
+5     DENVER               ST PAUL
+6     DENVER               MINNEAPOLIS
+7     KANSAS CITY          OKLAHOMA CITY
+8     KANSAS CITY          DES MOINES
+9     KANSAS CITY          OMAHA
+10    PUEBLO               OMAHA
+11    PUEBLO               FARGO
+12    OKL. CITY            FARGO
+
+NORTHWEST
+
+Dice  ODD                  EVEN
+
+2     SPOKANE              SPOKANE
+3     SPOKANE              SALT LAKE CITY
+4     SEATTLE              SALT LAKE CITY
+5     SEATTLE              SALT LAKE CITY
+6     SEATTLE              PORTLAND
+7     SEATTLE              PORTLAND
+8     RAPID CITY           PORTLAND
+9     CASPER               POCATELLO
+10    BILLINGS             BUTTE
+11    BILLINGS             BUTTE
+12    SPOKANE              PORTLAND
+
+SOUTHWEST
+
+Dice  ODD                  EVEN
+
+2     SAN DIEGO            LOS ANGELES
+3     SAN DIEGO            OAKLAND
+4     RENO                 OAKLAND
+5     SAN DIEGO            OAKLAND
+6     SACRAMENTO           LOS ANGELES
+7     LAS VEGAS            LOS ANGELES
+8     PHOENIX              LOS ANGELES
+9     EL PASO              SAN FRANCISCO
+10    TUCUMCARI            SAN FRANCISCO
+11    PHOENIX              SAN FRANCISCO
+12    PHOENIX              SAN FRANCISCO
+
+RAILROAD PRICE CHART (BACK OF RULEBOOK)
+---------------------------------------
+
+Code      Railroad                                        Price
+ACL       Atlantic Coast Line                             $12,000
+AT&SF     Atchison, Topeka, & Santa Fe                    $40,000
+B&M       Boston & Maine                                  $4,000
+B&O       Baltimore & Ohio                                $24,000
+CB&Q      Chicago, Burlington, & Quincy                   $20,000
+CMSTP&P   Chicago, Milwaukee, St. Paul, & Pacific         $18,000
+C&NW      Chicago & NorthWestern                          $14,000
+C&O       Chesapeake & Ohio                               $20,000
+CRI&P     Chicago, Rock Island, & Pacific                 $29,000
+D&RGW     Denver & Rio Grande Western                     $6,000
+GM&O      Gulf, Mobile, & Ohio                            $12,000
+GN        Great Northern                                  $17,000
+IC        Illinois Central                                $14,000
+MP        Missouri Pacific                                $21,000
+L&N       Louisville & Nashville                          $18,000
+NP        Northern Pacific                                $14,000
+N&W       Norfolk & Western                               $12,000
+NYC       New York Central                                $28,000
+NYNH&H    New York, New Haven, & Hartford                 $4,000
+PA        Pennsylvania                                    $30,000
+RF&P      Richmond, Fredericksburg, & Potomac             $4,000
+SAL       Seaboard Air Line                               $14,000
+SOU       Southern                                        $20,000
+SP        Southern Pacific                                $42,000
+SLSF      St. Louis–San Francisco                         $19,000
+T&P       Texas & Pacific                                 $10,000
+UP        Union Pacific                                   $40,000
+WP        Western Pacific                                 $8,000
+
+Original back-cover imprint: Copyright 1977, The Avalon Hill Game Co., Baltimore, MD. Printed in U.S.A. 3/85.
+
+Transcription note: The original rulebook includes a printed diagram showing permitted and forbidden movement at non-dot track intersections; the diagram itself is not representable as plain text. The accompanying rule text is retained. The separately supplied PAYOFF CHART is not printed in this four-page scan.

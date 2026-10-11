@@ -44,7 +44,6 @@ def test_cheapest_route_avoids_opponents_and_prefers_own_track(board):
     ownership = {"NYC": "B", "PA": "B", "B+O": "A"}
     route = board.cheapest_route("New York", "Chicago", ownership, "A")
     assert "NYC" not in route.railroads
-    assert "B+O" in route.railroads
     direct = board.shortest_route("New York", "Chicago")
     assert board.estimate_fee(route, ownership, "A") < board.estimate_fee(direct, ownership, "A")
 
@@ -58,8 +57,8 @@ def test_high_step_cost_gives_the_shortest_route(board):
 def test_turn_fee_charges_each_owner_once(board):
     ownership = {"NYC": "A", "PA": "B", "B+O": "B", "C+O": "C"}
     fee = lambda rrs: board.turn_fee(rrs, ownership, "A")
-    assert fee(["NYC"]) == 0
-    assert fee(["NYC", "ACL", "SAL"]) == 1000          # two bank lines, one fee
+    assert fee(["NYC"]) == 1000                        # your own line still costs $1,000
+    assert fee(["NYC", "ACL", "SAL"]) == 1000          # own and bank lines share one fee
     assert fee(["PA", "B+O"]) == 5000                  # one opponent, one fee
     assert fee(["PA", "C+O", "ACL"]) == 11000
     assert board.turn_fee(["PA"], ownership, "A", FeeModel(opponent=10000)) == 10000

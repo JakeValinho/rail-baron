@@ -22,13 +22,14 @@ Huge batches with numpy:                   sample(), sample_trips()
 
     python -m railbaron.destinations       prints the odds and a speed test
 
-Assumptions to check against your rulebook
-------------------------------------------
+Two rules that matter here
+--------------------------
 * Rolling the region you are already in lets you pick any region. Pass a
   `region_choice` table to say which one; without it the roll stands.
-* Rolling the city you are already in means the city dice are thrown again.
-  Minneapolis and St. Paul share a dot, as do San Francisco and Oakland, so
-  rolling your twin counts as rolling your own city.
+* Rolling the city you are already in loses the turn. This module just
+  reports the city; the game engine applies the lost turn. Minneapolis and
+  St. Paul share a dot, as do San Francisco and Oakland, so rolling your
+  twin is rolling your own city. Its payoff is zero.
 """
 
 from __future__ import annotations
@@ -186,17 +187,13 @@ class Destinations:
         `region_choice[current]` is the region the player takes when the
         dice give the region they are already in, for example
         `destinations.richest_region`. Leave it out and the roll stands.
+
+        The result can be `current` itself, which costs the player a turn.
         """
         region = self.region_table[int(rand() * OUTCOMES)]
-        if current is None:
-            return self.city_table[region][int(rand() * OUTCOMES)]
-        if region_choice is not None and region == self.region[current]:
+        if current is not None and region_choice is not None and region == self.region[current]:
             region = region_choice[current]
-        table, dot, here = self.city_table[region], self.dot, self.dot[current]
-        while True:
-            city = table[int(rand() * OUTCOMES)]
-            if dot[city] != here:
-                return city
+        return self.city_table[region][int(rand() * OUTCOMES)]
 
     # ----------------------------------------------------------- exact odds
 
@@ -204,19 +201,17 @@ class Destinations:
         """Chance of each region on the region roll."""
         return self._region_odds
 
-    def city_odds(self, region: int, current: Optional[int] = None) -> list[float]:
-        """Chance of each city once `region` is settled, rerolling `current`."""
-        odds = list(self._city_odds[region])
-        if current is not None:
-            here = self.dot[current]
-            blocked = sum(p for c, p in enumerate(odds) if self.dot[c] == here)
-            odds = [0.0 if self.dot[c] == here else p / (1.0 - blocked) for c, p in enumerate(odds)]
-        return odds
+    def city_odds(self, region: int) -> tuple[float, ...]:
+        """Chance of each city once `region` is settled."""
+        return self._city_odds[region]
 
     def destination_odds(
         self, current: Optional[int] = None, region_choice: Optional[Sequence[int]] = None
     ) -> list[float]:
-        """Chance of each city being the next destination."""
+        """Chance of each city coming up on the next destination roll.
+
+        Includes `current` itself, which is a lost turn and pays nothing.
+        """
         weight = list(self._region_odds)
         if current is not None and region_choice is not None:
             home, pick = self.region[current], region_choice[current]
@@ -226,14 +221,14 @@ class Destinations:
         odds = [0.0] * self.count
         for region, w in enumerate(weight):
             if w:
-                for city, p in enumerate(self.city_odds(region, current)):
+                for city, p in enumerate(self._city_odds[region]):
                     odds[city] += w * p
         return odds
 
     def expected_payoff_in_region(self, current: int, region: int) -> float:
         """Average payoff from `current` if the destination is in `region`."""
         pay = self.payoff[current]
-        return sum(p * pay[c] for c, p in enumerate(self.city_odds(region, current)))
+        return sum(p * pay[c] for c, p in enumerate(self._city_odds[region]))
 
     def expected_payoff(self, current: int, region_choice: Optional[Sequence[int]] = None) -> float:
         """Average payoff of the next trip out of `current`."""

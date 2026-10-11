@@ -140,6 +140,53 @@
   .ring.to { stroke: var(--gold); animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 50% { stroke-opacity: .25; } }
 
+  #paneGame { overflow-y: auto; padding: 12px 16px 16px; border-top: 1px solid var(--line); gap: 12px; }
+  .seg { display: flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; flex: none; }
+  .seg button {
+    flex: 1; background: none; color: var(--muted); border: 0; padding: 5px 0; font: inherit; cursor: pointer;
+  }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button.on { background: var(--text); color: var(--bg); font-weight: 600; }
+  .seg button:disabled { opacity: .4; cursor: default; }
+  #gPlay.seg-main { flex: 1.6; color: #1b1503; background: var(--gold); font-weight: 700; }
+  #gSeek { width: 100%; margin: 0; accent-color: var(--gold); flex: none; }
+  #gWhen { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; margin-top: -8px; }
+  #gTurn { background: #10141a; border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; min-height: 190px; }
+  #gTurn .who { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  #gTurn .rollrow { grid-template-columns: 46px auto 1fr; font-size: 12px; }
+  #gTurn .pay { color: var(--gold); font-weight: 700; }
+  #gTurn .note { color: var(--muted); font-size: 12px; margin-top: 6px; }
+  .chip {
+    width: 18px; height: 18px; border-radius: 50%; display: inline-grid; place-items: center; flex: none;
+    font-size: 11px; font-weight: 700; color: #10141a; box-shadow: 0 0 0 1.5px #fff;
+  }
+  #gScore { display: grid; gap: 4px; }
+  .prow {
+    display: grid; grid-template-columns: 18px 1fr auto; gap: 2px 10px; align-items: center;
+    padding: 6px 8px; border-radius: 6px; border: 1px solid transparent;
+  }
+  .prow.turn { background: #222a35; border-color: var(--line); }
+  .prow .cash { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .prow > span:nth-child(2) { display: flex; flex-wrap: wrap; align-items: center; row-gap: 2px; white-space: nowrap; }
+  .prow .going { grid-column: 2 / -1; color: var(--muted); font-size: 12px; }
+  .prow .bar { grid-column: 2 / -1; height: 3px; border-radius: 2px; background: var(--line); overflow: hidden; }
+  .prow .bar i { display: block; height: 100%; }
+  #gTurn .line { margin: 3px 0; }
+  #gTurn .line .sub { padding: 0; font-size: 12px; }
+  #gTurn .die { width: 26px; height: 26px; padding: 4px; border-radius: 5px; }
+  #gTurn .die.color { background: #c0392b; }
+  #gTurn .die.color i.p { background: #fff; }
+  .badge { font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 8px; margin-left: 6px;
+           background: var(--line); color: var(--text); vertical-align: 1px; }
+  .badge.gold { background: var(--gold); color: #1b1503; }
+  .prow.gone { opacity: .45; }
+  .prow .owns { grid-column: 2 / -1; display: flex; flex-wrap: wrap; gap: 3px; }
+  .prow .owns span { font-size: 10px; padding: 0 5px; border-radius: 3px; border: 1px solid; }
+  .token { stroke: #fff; stroke-width: 1.6; }
+  .tokenText { font-size: 11.5px; font-weight: 700; fill: #10141a; text-anchor: middle; pointer-events: none; }
+  .goal { fill: none; stroke-width: 2.4; stroke-dasharray: 4 3; pointer-events: none; }
+  .ahead { fill: none; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; opacity: .55; pointer-events: none; }
+
   @media (max-width: 760px) {
     body { flex-direction: column; }
     aside { width: 100%; height: 45%; border-left: 0; border-top: 1px solid var(--line); }
@@ -164,6 +211,7 @@
   <div id="tabs">
     <button data-pane="paneRR" class="on">Railroads</button>
     <button data-pane="paneDest">Destinations</button>
+    <button data-pane="paneGame">Game</button>
   </div>
   <div class="pane" id="paneRR">
   <div id="sort">
@@ -187,6 +235,31 @@
     <div id="totals"></div>
     <div id="log"></div>
     <button class="btn quiet" id="restart">Start over</button>
+  </div>
+  <div class="pane" id="paneGame" hidden>
+    <div class="seg" id="gPick"></div>
+    <div class="seg">
+      <button id="gRestart">Restart</button>
+      <button id="gBack">Back</button>
+      <button id="gPlay" class="seg-main">Play</button>
+      <button id="gStep">Step</button>
+    </div>
+    <div class="seg" id="gSpeed">
+      <button data-speed="0.5">Slow</button>
+      <button data-speed="1" class="on">Normal</button>
+      <button data-speed="4">Fast</button>
+      <button data-speed="20">Fastest</button>
+    </div>
+    <div class="seg" id="gPaint">
+      <button data-paint="owner" class="on">Track by owner</button>
+      <button data-paint="line">Track by railroad</button>
+    </div>
+    <input type="range" id="gSeek" min="0" value="0">
+    <div id="gWhen"></div>
+    <div id="gTurn"></div>
+    <div id="gScore"></div>
+    <div class="sub" style="padding:0">This is a recording of a game played by the Python engine. Run
+      <b>python -m railbaron.game</b> for a new one.</div>
   </div>
 </aside>
 <div id="tip" hidden></div>
@@ -465,17 +538,17 @@ async function rollDestination(animated = true, pick = chooseRegion) {
     $("res1").textContent += region === D.region[game.here] ? ", kept" : `, chose ${REGION[D.regions[region]]}`;
   }
 
-  let city;
-  for (;;) {
-    dice = throwDice();
-    await animate($("dice2"), dice, animated);
-    city = D.city_table[region][outcome(...dice)];
-    if (game.here == null || D.nodes[city] !== D.nodes[game.here]) break;
-    $("res2").textContent = `${readDice(dice)}: ${D.names[city]}, already there, rolling again`;
-    if (animated) await sleep(600);
-  }
+  dice = throwDice();
+  await animate($("dice2"), dice, animated);
+  const city = D.city_table[region][outcome(...dice)];
   $("res2").textContent = `${readDice(dice)}: ${D.names[city]}`;
 
+  if (game.here != null && D.nodes[city] === D.nodes[game.here]) {
+    // The rulebook: already in the city you roll, you lose the turn.
+    $("result").innerHTML = `<div class="big">Already in ${esc(D.names[city])}</div><div class="sub">That loses the turn. Roll again next turn.</div>`;
+    game.busy = false; $("roll").disabled = false;
+    return;
+  }
   if (game.here == null) {
     $("result").innerHTML = `<div class="big">Home city: ${esc(D.names[city])}</div><div class="sub">Roll again for a first destination.</div>`;
   } else {
@@ -557,6 +630,244 @@ svg.addEventListener("click", e => {
   else if (!e.target.dataset.city && pinned) pin(pinned);
 });
 
+// --------------------------------------------------------------- game replay
+// The Python engine played these games and wrote down every roll, move,
+// purchase and payment. This section only replays them. It applies no rules.
+const GAMES = DATA.games || [];
+const PCOLOR = ["#ff6b6b", "#4dabf7", "#ffd43b", "#69db7c", "#c692ff", "#ffa94d"];
+const BANK_COLOR = "#4a5565";
+const gPlayLayer = el("g", {}, svg);
+const faces3 = k => [Math.floor(k / 36) + 1, Math.floor(k / 6) % 6 + 1, k % 6 + 1];
+let G = null, STATES = [], gPos = 0, gRun = 0, gPlaying = false, gSpeed = 1, gPaint = "owner", painted = "";
+const chip = i => `<span class="chip" style="background:${PCOLOR[i]}">${i + 1}</span>`;
+const pname = i => esc(G.players[i].name);
+const rrName = r => esc(DATA.railroads[r].name);
+
+const cloneState = st => ({ players: st.players.map(p => ({ ...p })), owner: st.owner.slice(), winner: st.winner });
+// Apply one recorded event to a state. i is the player whose turn it is.
+function applyEvent(st, i, e) {
+  const p = st.players[i];
+  if (e.t === "dest") { if (!e.lost) { p.dest = e.city; p.declared = e.declared; } }
+  else if (e.t === "route") { p.route = e.nodes; p.rrs = e.rrs; p.step = 0; }
+  else if (e.t === "move") p.step = e.to;
+  else if (e.t === "arrive") { p.city = e.city; p.dest = null; p.declared = false; p.trips++; p.cash += e.pay; }
+  else if (e.t === "buy") {
+    p.cash -= e.price;
+    if (e.item === "line") st.owner[e.rr] = i; else p[e.item] = true;
+  } else if (e.t === "sale") {
+    st.owner[e.rr] = e.to; p.cash += e.price;
+    if (e.to >= 0) st.players[e.to].cash -= e.price;
+  } else if (e.t === "fees") {
+    p.cash -= e.bank;
+    for (const [o, amount] of e.to) { p.cash -= amount; st.players[o].cash += amount; }
+  } else if (e.t === "out") { p.out = true; p.dest = null; }
+  else if (e.t === "undeclare") st.players[e.p].declared = false;
+  else if (e.t === "win") st.winner = e.p ?? i;
+}
+// The state after every turn, worked out once when a game is picked.
+function buildStates() {
+  let st = { winner: null, owner: DATA.railroads.map(() => -1),
+    players: G.players.map(p => ({ home: p.home, city: p.home, dest: null, declared: false,
+      route: [D.nodes[p.home]], rrs: [], step: 0, cash: G.start_cash, trips: 0,
+      express: false, superchief: false, out: false })) };
+  STATES = [st];
+  for (const turn of G.turns) {
+    st = cloneState(st);
+    for (const e of turn.ev) applyEvent(st, turn.p, e);
+    turn.cash.forEach((c, i) => st.players[i].cash = c);     // the engine's figures are final
+    STATES.push(st);
+  }
+}
+function paintTracks(st) {
+  const mode = st && !$("paneGame").hidden ? gPaint : "line";
+  const key = mode === "owner" ? st.owner.join() : "line";
+  if (key === painted) return;
+  painted = key;
+  for (const t of trackEls)
+    t.lines[0].style.stroke = mode === "owner" ? (st.owner[t.rr] < 0 ? BANK_COLOR : PCOLOR[st.owner[t.rr]]) : "";
+}
+function drawPlay(st) {
+  gPlayLayer.innerHTML = "";
+  if (!G || $("paneGame").hidden) { paintTracks(null); return; }
+  st = st || STATES[gPos];
+  paintTracks(st);
+  const last = gPos ? G.turns[gPos - 1].p : -1;
+  st.players.forEach((p, i) => {
+    if (p.dest == null || p.out) return;
+    const goal = P[D.nodes[p.declared ? p.home : p.dest]];
+    el("circle", { cx: goal.x, cy: goal.y, r: CITY_R + 4 + i * 2.4, class: "goal", stroke: PCOLOR[i] }, gPlayLayer);
+    if (i === last && p.step < p.route.length - 1)
+      el("polyline", { points: p.route.slice(p.step).map(n => `${P[n].x},${P[n].y}`).join(" "),
+                       class: "ahead", stroke: PCOLOR[i] }, gPlayLayer);
+  });
+  const at = {};
+  st.players.forEach((p, i) => { if (!p.out) (at[p.route[p.step]] ||= []).push(i); });
+  for (const [node, who] of Object.entries(at)) who.forEach((i, j) => {
+    // Players sharing a dot fan out around it.
+    const a = 2 * Math.PI * j / who.length - Math.PI / 2, r = who.length > 1 ? 10 : 0;
+    const x = P[node].x + Math.cos(a) * r, y = P[node].y + Math.sin(a) * r;
+    el("circle", { cx: x, cy: y, r: 9, class: "token", fill: PCOLOR[i] }, gPlayLayer);
+    el("text", { x, y: y + 4, class: "tokenText" }, gPlayLayer).textContent = i + 1;
+  });
+}
+function diceRow(label, k, text) {
+  const f = faces3(k);
+  return `<div class="rollrow"><span class="lbl">${label}</span><span class="dice">${dieHTML(f[0], true)}${dieHTML(f[1])}${dieHTML(f[2])}</span>
+    <span>${readDice(f)}: ${text}</span></div>`;
+}
+const line = (html, sub) => `<div class="line">${html}${sub ? `<div class="sub">${sub}</div>` : ""}</div>`;
+// One turn, event by event, in words.
+function describeTurn(k) {
+  const turn = G.turns[k], i = turn.p, st = cloneState(STATES[k]), p = st.players[i];
+  let html = `<div class="who">${chip(i)}${pname(i)}</div>`;
+  for (const e of turn.ev) {
+    if (e.t === "dest") {
+      let region = REGION[D.regions[e.rolled]];
+      if (e.rolled !== e.region) region += `. Own region, so takes ${REGION[D.regions[e.region]]}`;
+      html += diceRow("Region", e.region_roll, region) + diceRow("City", e.city_roll, esc(D.names[e.city]));
+      if (e.lost) html += line("Already there. Loses the turn.");
+      if (e.declared) html += line(`<b>Declares.</b> Heads home to ${esc(D.names[p.home])}.`,
+                                   `${esc(D.names[e.city])} is the alternate destination.`);
+    } else if (e.t === "route") {
+      const lines = [...new Set(e.rrs)].map(r => esc(DATA.railroads[r].id)).join(", ");
+      const weighed = e.options && e.options.length > 1
+        ? "Weighed: " + e.options.map(o => `${o.picked ? "<b>" : ""}${o.dots} dots, about ${money(o.fees)} in fees${o.picked ? "</b>" : ""}`).join(" or ")
+        : "";
+      html += line(`Route: ${e.rrs.length} dots on ${lines}`, weighed);
+    } else if (e.t === "move") {
+      const left = p.route.length - 1 - e.to, roll = e.dice.reduce((a, c) => a + c, 0);
+      const dice = e.bonus ? `<span class="die color">${dieHTML(e.dice[0]).slice(18)}` : dieHTML(e.dice[0]) + dieHTML(e.dice[1]);
+      html += `<div class="rollrow"><span class="lbl">${e.bonus ? "Bonus" : "Move"}</span><span class="dice">${dice}</span>
+        <span>${roll}: ${left ? `moves ${e.to - e.from}, ${left} to go` : "arrives"}</span></div>`;
+    } else if (e.t === "arrive") {
+      html += line(`Arrives in <b>${esc(D.names[e.city])}</b> from ${esc(D.names[e.from])}. Collects <span class="pay">${money(e.pay)}</span>`);
+    } else if (e.t === "home") {
+      html += line("Reaches the home city.");
+    } else if (e.t === "buy") {
+      const what = e.item === "line" ? rrName(e.rr) : e.item === "express" ? "an Express" : "a Superchief";
+      const worth = e.considered && e.considered.length
+        ? "Valued: " + e.considered.map(c => `${esc(DATA.railroads[c.rr].id)} ${money(c.value)}`).join(", ") : "";
+      html += line(`Buys <b>${what}</b> for ${money(e.price)}`, worth);
+    } else if (e.t === "sale") {
+      const to = e.to < 0 ? "the bank" : pname(e.to);
+      const bids = e.bids.length ? `${e.bids.length} bid${e.bids.length > 1 ? "s" : ""}, opening at ${money(e.bids[0][1])}` : "No bids";
+      html += line(`Cannot pay. Sells <b>${rrName(e.rr)}</b> to ${to} for ${money(e.price)}`, e.auction ? bids : "");
+    } else if (e.t === "fees") {
+      const parts = [];
+      if (e.bank) parts.push(`${money(e.bank)} to the bank`);
+      for (const [o, amount] of e.to) parts.push(`${money(amount)} to ${pname(o)}`);
+      html += line(`Pays ${parts.join(", ")}`);
+    } else if (e.t === "out") {
+      html += line("<b>Cannot pay and has nothing to sell. Out of the game.</b>");
+    } else if (e.t === "undeclare") {
+      html += line(`${pname(e.p)} is below ${money(G.target_cash)}: no longer declared.`);
+    } else if (e.t === "win") {
+      html += line(`<b style="color:var(--gold)">${pname(e.p ?? i)} wins</b> (${e.how}).`);
+    }
+    applyEvent(st, i, e);
+  }
+  return html;
+}
+function drawGamePanel() {
+  if (!G) { $("gTurn").innerHTML = "No recorded game. Run <b>python -m railbaron.game</b>."; return; }
+  const n = G.players.length, st = STATES[gPos], total = G.turns.length;
+  $("gSeek").max = total; $("gSeek").value = gPos;
+  $("gWhen").innerHTML = `<span>Turn ${gPos} of ${total}</span><span>${st.owner.filter(o => o >= 0).length} of ${st.owner.length} railroads sold</span>`;
+  $("gBack").disabled = $("gRestart").disabled = gPos === 0;
+  $("gStep").disabled = gPos >= total;
+  $("gPlay").textContent = gPlaying ? "Pause" : gPos >= total ? "Replay" : "Play";
+
+  if (gPos === 0) {
+    $("gTurn").innerHTML = `<div class="who">Home cities</div>` + G.players.map((p, i) =>
+      `<div style="display:flex;gap:8px;align-items:center;margin:3px 0">${chip(i)}<span>${esc(p.name)} starts in <b>${esc(D.names[p.home])}</b></span></div>`).join("") +
+      `<div class="note">Everyone starts with ${money(G.start_cash)}. To win, reach ${money(G.target_cash)} and get back home.</div>`;
+  } else $("gTurn").innerHTML = describeTurn(gPos - 1);
+
+  const next = gPos < total ? G.turns[gPos].p : -1;
+  $("gScore").innerHTML = st.players.map((p, i) => {
+    const going = p.out ? "Out of the game"
+      : p.dest == null ? `In ${esc(D.names[p.city])}`
+      : `${esc(D.names[p.city])} to ${esc(D.names[p.declared ? p.home : p.dest])}, ${p.route.length - 1 - p.step} dots to go`;
+    const train = p.superchief ? '<span class="badge gold">Superchief</span>' : p.express ? '<span class="badge">Express</span>' : "";
+    const flag = st.winner === i ? '<span class="badge gold">Winner</span>' : p.declared ? '<span class="badge gold">Declared</span>' : "";
+    const owns = st.owner.map((o, r) => o === i ? `<span style="border-color:${PCOLOR[i]}" title="${rrName(r)}">${esc(DATA.railroads[r].id)}</span>` : "").join("");
+    return `<div class="prow${i === next ? " turn" : ""}${p.out ? " gone" : ""}">${chip(i)}<span>${esc(G.players[i].name)}${train}${flag}</span>
+      <span class="cash">${money(p.cash)}</span>
+      <span class="going">${going}. ${p.trips} trip${p.trips === 1 ? "" : "s"}.</span>
+      ${owns ? `<span class="owns">${owns}</span>` : ""}
+      <span class="bar"><i style="width:${Math.min(100, 100 * p.cash / G.target_cash)}%;background:${PCOLOR[i]}"></i></span></div>`;
+  }).join("");
+}
+function showGame() { drawGamePanel(); drawPlay(); }
+async function advance(animated, run) {
+  if (gPos >= G.turns.length) return false;
+  const turn = G.turns[gPos], i = turn.p, st = cloneState(STATES[gPos]);
+  gPos++;
+  drawGamePanel();
+  if (animated) {
+    for (const e of turn.ev) {
+      if (e.t === "move") {
+        for (let s = e.from + 1; s <= e.to && run === gRun; s++) {
+          st.players[i].step = s;
+          drawPlay(st);
+          await sleep(85 / gSpeed);
+        }
+      }
+      applyEvent(st, i, e);
+      if (e.t === "route" || e.t === "buy" || e.t === "sale") { drawPlay(st); await sleep(350 / gSpeed); }
+      if (run !== gRun) return false;
+    }
+  }
+  drawPlay();
+  return true;
+}
+function pauseGame() { gRun++; gPlaying = false; }
+async function playGame() {
+  if (gPos >= G.turns.length) gPos = 0;
+  const run = ++gRun;
+  gPlaying = true;
+  showGame();
+  while (run === gRun && await advance(true, run)) await sleep(380 / gSpeed);
+  if (run === gRun) { gPlaying = false; showGame(); }
+}
+function seekGame(n) { pauseGame(); gPos = Math.max(0, Math.min(G.turns.length, n)); showGame(); }
+function pickGame(i) {
+  pauseGame();
+  G = GAMES[i]; gPos = 0;
+  buildStates();
+  document.querySelectorAll("#gPick button").forEach((b, j) => b.classList.toggle("on", j === i));
+  showGame();
+}
+const RR_INDEX = Object.fromEntries(DATA.railroads.map((r, i) => [r.id, i]));
+for (const t of trackEls) t.rr = RR_INDEX[t.lines[0].dataset.rr];
+$("gPick").innerHTML = GAMES.map(g => `<button>${g.players.length} players</button>`).join("");
+document.querySelectorAll("#gPick button").forEach((b, i) => b.onclick = () => pickGame(i));
+$("gPlay").onclick = () => gPlaying ? (pauseGame(), showGame()) : playGame();
+$("gStep").onclick = () => { pauseGame(); const run = gRun; advance(true, run).then(showGame); };
+$("gBack").onclick = () => seekGame(gPos - 1);
+$("gRestart").onclick = () => seekGame(0);
+$("gSeek").oninput = e => seekGame(+e.target.value);
+document.querySelectorAll("#gSpeed button").forEach(b => b.onclick = () => {
+  gSpeed = +b.dataset.speed;
+  document.querySelectorAll("#gSpeed button").forEach(x => x.classList.toggle("on", x === b));
+});
+document.querySelectorAll("#gPaint button").forEach(b => b.onclick = () => {
+  gPaint = b.dataset.paint;
+  document.querySelectorAll("#gPaint button").forEach(x => x.classList.toggle("on", x === b));
+  drawPlay();
+});
+if (GAMES.length) pickGame(0); else drawGamePanel();
+document.querySelectorAll("#tabs button").forEach(b => b.addEventListener("click", () => { if (b.dataset.pane !== "paneGame") pauseGame(); showGame(); }));
+if (DATA.open_tab) { showPane(DATA.open_tab); showGame(); }
+// map.html#game=1&turn=40 opens the second recorded game at turn 40.
+for (const link of LINKS) {
+  const m = /^(game|turn)(?:=(\d+))?$/.exec(link);
+  if (!m || !GAMES.length) continue;
+  showPane("paneGame");
+  if (m[1] === "game") pickGame(Math.min(GAMES.length - 1, +(m[2] || 0))); else seekGame(+(m[2] || 0));
+}
+if (LINKS.includes("play") && GAMES.length) { showPane("paneGame"); playGame(); }   // map.html#play
+
 // ---------------------------------------------------------- layout switch
 const HINTS = {
   geo: document.getElementById("hint").textContent,
@@ -580,7 +891,7 @@ function setLayout(name, ms = 700) {
       P[id].y = from[id].y + (to[id].y - from[id].y) * k;
     }
     for (const key of "xywh") view[key] = v0[key] + (v1[key] - v0[key]) * k;
-    updateGeometry(); applyView(); drawGame();
+    updateGeometry(); applyView(); drawGame(); drawPlay();
     if (t < 1) return requestAnimationFrame(step);
     HOME = v1;
     placeLabels();

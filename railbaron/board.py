@@ -67,19 +67,17 @@ class City:
 class FeeModel:
     """What one turn of riding costs, by who owns the track.
 
-    Bank track costs `bank` once per turn no matter how many bank railroads
-    are used. Each opponent whose track is used is paid `opponent` once per
-    turn. Raise `opponent` to 10000 once every railroad has been sold.
+    The player's own track and the bank's cost `bank` once per turn between
+    them, however many of those railroads are used. Each opponent whose
+    track is used is paid `opponent` once per turn. Raise `opponent` to
+    10000 once every railroad has been sold.
     """
 
-    own: int = 0
     bank: int = 1000
     opponent: int = 5000
 
     def for_owner(self, owner: Optional[Hashable], player: Hashable) -> int:
-        if owner is None:
-            return self.bank
-        return self.own if owner == player else self.opponent
+        return self.bank if owner is None or owner == player else self.opponent
 
 
 @dataclass(frozen=True)
@@ -236,6 +234,22 @@ class Board:
         """Minimum number of dots moved to get from a to b."""
         return self._distances[self.node(a)][self.node(b)]
 
+    def shortest_path(self, a: str, b: str) -> tuple[str, ...]:
+        """Dots along one shortest route from a to b, both ends included.
+
+        Much quicker than shortest_route() because it does not work out
+        which railroad carries each step. The same pair always gives the
+        same path.
+        """
+        node, dst = self.node(a), self.node(b)
+        to_dst = self._distances[dst]
+        path = [node]
+        while node != dst:
+            closer = to_dst[node] - 1
+            node = next(v for v in self.simple[node] if to_dst[v] == closer)
+            path.append(node)
+        return tuple(path)
+
     def shortest_route(
         self,
         a: str,
@@ -250,7 +264,7 @@ class Board:
         tie toward the one with the lowest fees for `player`.
         """
         # A step costs more than any possible saving in fees, so length wins.
-        big = 1 + self.graph.number_of_edges() * max(fees.own, fees.bank, fees.opponent, 1)
+        big = 1 + self.graph.number_of_edges() * max(fees.bank, fees.opponent, 1)
         return self._route(a, b, ownership or {}, player, fees, step_cost=big, moves_per_turn=1)
 
     def cheapest_route(
@@ -331,10 +345,8 @@ class Board:
     ) -> int:
         """Fee for one turn in which `player` rode the given railroads."""
         owners = {ownership.get(rr) for rr in railroads}
-        total = 0
-        for owner in owners:
-            total += fees.for_owner(owner, player)
-        return total
+        others = {o for o in owners if o is not None and o != player}
+        return (fees.bank if len(owners) > len(others) else 0) + fees.opponent * len(others)
 
     def estimate_fee(
         self,

@@ -35,7 +35,7 @@ def railroad_colors(names: list[str]) -> dict[str, str]:
     return colors
 
 
-def build_payload(board: Board) -> dict:
+def build_payload(board: Board, games: list | None = None, open_tab: str | None = None) -> dict:
     colors = railroad_colors(list(board.railroads))
     stats = {row["railroad"]: row for row in board.railroad_stats()}
 
@@ -74,6 +74,10 @@ def build_payload(board: Board) -> dict:
         for c in board.cities.values()
     ]
     dest = Destinations.load(board=board)
+    if games is None:
+        from .game import Tables, record_games
+
+        games = record_games(tables=Tables(board, dest))
     destinations = {
         "names": dest.names,
         "nodes": dest.nodes,
@@ -85,12 +89,16 @@ def build_payload(board: Board) -> dict:
         "richest": dest.richest_region,
     }
     return {"nodes": nodes, "segments": segments, "railroads": railroads, "cities": cities,
-            "destinations": destinations}
+            "destinations": destinations, "games": games, "open_tab": open_tab}
 
 
-def render(out: Path | str = DEFAULT_OUT, board: Board | None = None) -> Path:
+def render(out: Path | str = DEFAULT_OUT, board: Board | None = None,
+           games: list | None = None, open_tab: str | None = None) -> Path:
+    """Write the page. `games` are recordings from railbaron.game; without
+    them a fresh game is played for each of 3, 4, 5 and 6 players."""
     board = board or Board.load()
-    data = json.dumps(build_payload(board), separators=(",", ":")).replace("</", "<\\/")
+    payload = build_payload(board, games, open_tab)
+    data = json.dumps(payload, separators=(",", ":")).replace("</", "<\\/")
     html = TEMPLATE.read_text(encoding="utf-8").replace("__DATA__", data)
     out = Path(out)
     out.write_text(html, encoding="utf-8")
