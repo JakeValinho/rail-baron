@@ -48,7 +48,7 @@ import time
 from typing import Optional, Sequence, Union
 
 from .destinations import REGIONS, Destinations
-from .policy import BANK, BANK_FEE, EXPRESS, SUPERCHIEF, Policy
+from .policy import BANK, BANK_FEE, EXPRESS, ExpectedCostPolicy, Policy, SUPERCHIEF
 from .tables import Tables
 
 STARTING_CASH = 20_000
@@ -138,6 +138,8 @@ class Game:
         self.declared = 0                   # how many players are declared and heading home
         self.bought = []                    # (railroad, turn) for each purchase from the bank, in order
         self.bank_due = 0                   # fees run up by the player now moving
+        self.roll = None                    # (player, dots to move, bonus roll to follow) while a move is chosen
+        self.memo: dict = {}                # scratch space for policies
         self.due: dict = {}
         self.recording: Optional[dict] = None
         self.route_note = self.buy_note = None
@@ -211,8 +213,10 @@ class Game:
         self._plan(p, t.city_node[p.city], goal, None, ev)
         return True
 
-    def _plan(self, p: Player, src: int, goal: int, blocked, ev) -> None:
-        p.dots, p.rrs = p.policy.choose_route(self, p, src, goal, blocked)     # PLAYER CHOICE 2
+    def _plan(self, p: Player, src: int, goal: int, blocked, ev, chosen=None) -> None:
+        if chosen is None:
+            chosen = p.policy.choose_route(self, p, src, goal, blocked)        # PLAYER CHOICE 2
+        p.dots, p.rrs = tuple(chosen[0]), tuple(chosen[1])
         self._validate_route(p, p.dots, p.rrs, src, goal, blocked)
         p.step, p.goal, p.replan = 0, goal, False
         if ev is not None:
@@ -284,11 +288,17 @@ class Game:
 
     def _replan(self, p: Player, ev) -> None:
         """Choose a new route from where the player stands, mid-trip."""
+        before = p.trail
         p.trail, blocked = self._ridden(p)
-        self._plan(p, p.dots[p.step], p.goal, blocked, ev)
+        src = p.dots[p.step]
+        dots, rrs = p.policy.choose_route(self, p, src, p.goal, blocked)       # PLAYER CHOICE 2
+        if tuple(dots) == p.dots[p.step:] and tuple(rrs) == p.rrs[p.step:]:
+            p.trail, p.replan = before, False       # carrying on as planned
+            return
+        self._plan(p, src, p.goal, blocked, ev, (dots, rrs))
 
-    def _rover(self, p: Player, ev) -> None:
-        """Before p moves: let them turn aside to chase a declared player."""
+    def _rover(self, p: Player, ev) -> bool:
+        """Before p moves: let them turn aside to chase a declared player. True if they do."""
         for q in self.players:
             if q.declared and q is not p and not p.declared and p.step < len(p.rrs):
                 trail, blocked = self._ridden(p)
@@ -303,7 +313,8 @@ class Game:
                 if ev is not None:
                     ids = self.tables.node_ids
                     ev.append({"t": "rover", "target": q.index, "nodes": [ids[n] for n in dots], "rrs": list(rrs)})
-                return
+                return True
+        return False
 
     def _catch(self, p: Player, q: Player, ev) -> None:
         """p has moved onto or through declared player q: the rover play."""
@@ -317,9 +328,8 @@ class Game:
     # ----------------------------------------------------------- movement
 
     def _move(self, p: Player, count: int, ev, dice) -> None:
-        if self.declared and not p.declared:
-            self._rover(p, ev)
-        if p.replan and p.step < len(p.rrs):
+        chasing = self.declared and not p.declared and self._rover(p, ev)
+        if (p.replan or p.policy.EVERY_ROLL) and not chasing and p.step < len(p.rrs):
             self._replan(p, ev)
         start, last = p.step, len(p.rrs)
         to = min(start + count, last)
@@ -570,10 +580,14 @@ class Game:
             m = int(self.rand() * 36)
             d1, d2 = m // 6, m % 6
             bonus = p.superchief or (d1 == d2 and (p.express or d1 == 5))
+            self.roll = (p.index, d1 + d2 + 2, bool(bonus))
             self._move(p, d1 + d2 + 2, ev, [d1 + 1, d2 + 1])
+            self.roll = None
             if bonus and not p.at_home and (p.destination >= 0 or self._start_trip(p, ev)):
                 die = int(self.rand() * 6) + 1
+                self.roll = (p.index, die, False)
                 self._move(p, die, ev, [die])
+                self.roll = None
         self._settle(p, ev)
 
         if ev is not None:
@@ -617,6 +631,7 @@ def _play_batch(job) -> list:
     rounds = trips = lines = sold = out = unfinished = superchiefs = 0
     count = tables.rr_count
     times, order, when = [0] * count, [0] * count, [0] * count     # first purchase of each railroad
+    held, won = [0] * count, [0] * count        # at the end of a finished game: owned by a player, by the winner
     for s in seeds:
         g = Game(players, s, tables, **options).play()
         rounds += g.rounds
@@ -637,7 +652,11 @@ def _play_batch(job) -> list:
             wins[g.winner] += 1
             trips += w.trips
             lines += len(w.lines)
-    return [rounds, trips, lines, sold, out, unfinished, superchiefs] + wins + times + order + when
+            for r, o in enumerate(g.owner):
+                if o >= 0:
+                    held[r] += 1
+                    won[r] += o == g.winner
+    return [rounds, trips, lines, sold, out, unfinished, superchiefs] + wins + times + order + when + held + won
 
 
 def simulate(games: int, players: int = 4, seed: Optional[int] = None,
@@ -678,8 +697,34 @@ def simulate(games: int, players: int = 4, seed: Optional[int] = None,
         "average_superchiefs": superchiefs / games,
         "bankruptcies_per_game": out / games,
         "unfinished": unfinished,
-        "purchases": _purchases(tables, games, totals[7 + players:]),
+        "purchases": _purchases(tables, games, totals[7 + players:7 + players + 3 * tables.rr_count]),
+        "winner_railroads": _winner_railroads(tables, finished, totals[7 + players + 3 * tables.rr_count:]),
     }
+
+
+def _winner_railroads(tables: Tables, finished: int, columns: list) -> list[dict]:
+    """Per railroad, most often the winner's first.
+
+    winner_share      share of finished games in which the winner owned it at the end
+    owner_win_share   of the games where a player owned it at the end, the share that
+                      owner won. Winners end with more railroads than losers, so the
+                      figure to compare with is the winner's share of all railroads.
+    """
+    n = tables.rr_count
+    held, won = columns[:n], columns[n:]
+    rows = [{"railroad": tables.rr_ids[r], "name": tables.rr_name[r], "price": tables.rr_price[r],
+             "winner_share": won[r] / finished, "owner_win_share": won[r] / held[r] if held[r] else None}
+            for r in range(n)]
+    return sorted(rows, key=lambda row: -row["winner_share"])
+
+
+def winner_report(summary: dict) -> str:
+    """The winner's-railroads table for a simulate() result."""
+    lines = [f"  {'railroad':10}{'price':>9}{'winner owns':>13}{'owner wins':>12}"]
+    for row in summary["winner_railroads"]:
+        owner = "" if row["owner_win_share"] is None else f"{row['owner_win_share']:>12.1%}"
+        lines.append(f"  {row['railroad']:10}{'$' + format(row['price'], ','):>9}{row['winner_share']:>13.1%}{owner}")
+    return "\n".join(lines)
 
 
 def _purchases(tables: Tables, games: int, columns: list) -> list[dict]:
@@ -707,11 +752,13 @@ def purchase_report(summary: dict) -> str:
 
 
 def record_games(player_counts: Sequence[int] = (3, 4, 5, 6), seed: Optional[int] = None,
-                 tables: Optional[Tables] = None) -> list[dict]:
-    """Play one recorded game per player count, for the map page to replay."""
+                 tables: Optional[Tables] = None, **options) -> list[dict]:
+    """Play one recorded game per player count, for the map page to replay.
+    Other options, such as policies=..., are passed on to Game."""
     tables = tables or Tables()
     seeds = random.Random(seed)
-    return [Game(n, seeds.getrandbits(48), tables, record=True).play().recording for n in player_counts]
+    return [Game(n, seeds.getrandbits(48), tables, record=True, **options).play().recording
+            for n in player_counts]
 
 
 def region_choice_report(destinations: Destinations) -> str:
@@ -732,6 +779,11 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=None, help="repeat the same dice")
     parser.add_argument("--workers", type=int, default=1,
                         help="processes to simulate with; 0 uses every processor (default 1)")
+    parser.add_argument("--routes", choices=("quick", "calculated"), default="quick",
+                        help="how players choose routes: the quick rule of thumb (default), or the "
+                             "calculated best move for every roll, which wins more and is far slower")
+    parser.add_argument("--winners", action="store_true",
+                        help="with --games: also print how often the winner owns each railroad")
     parser.add_argument("--purchases", action="store_true",
                         help="with --games: also print the order in which railroads are bought")
     parser.add_argument("--choices", action="store_true", help="print the region-choice table and stop")
@@ -743,8 +795,9 @@ def main() -> None:
         print(region_choice_report(tables.destinations))
         return
 
+    policy = ExpectedCostPolicy() if args.routes == "calculated" else DEFAULT_POLICY
     if args.games:
-        s = simulate(args.games, args.players, args.seed, tables, workers=args.workers)
+        s = simulate(args.games, args.players, args.seed, tables, workers=args.workers, policies=policy)
         print(f"{s['games']:,} games with {s['players']} players in {s['seconds']:.2f} s "
               f"({s['games_per_second']:,.0f} games a second)")
         print(f"  average length       {s['average_rounds']:.1f} rounds")
@@ -759,6 +812,12 @@ def main() -> None:
             print("\nRailroads, earliest bought first. Order is 1 for the first railroad bought in a game;")
             print("round is the round of play it was bought in. Both are averages over games where it was bought.")
             print(purchase_report(s))
+        if args.winners:
+            typical = s["average_winner_railroads"] / max(1e-9, s["average_railroads_sold"])
+            print("\nRailroads, most often the winner's first. 'Winner owns' is the share of games in which the")
+            print("winner held the railroad at the end. 'Owner wins' is how often whoever held it won. Winners")
+            print(f"end with more railroads than losers, so an average railroad shows about {typical:.0%} in both columns.")
+            print(winner_report(s))
         return
 
     import webbrowser
@@ -767,7 +826,7 @@ def main() -> None:
 
     # The requested player count comes first, so the page opens on it.
     counts = [args.players] + [n for n in (3, 4, 5, 6) if n != args.players]
-    out = render(board=tables.board, games=record_games(counts, args.seed, tables), open_tab="paneGame")
+    out = render(board=tables.board, games=record_games(counts, args.seed, tables, policies=policy), open_tab="paneGame")
     print(f"wrote {out}")
     if not args.no_open:
         webbrowser.open(out.resolve().as_uri())

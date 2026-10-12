@@ -795,3 +795,14 @@ def test_purchase_order_statistics_add_up(tables):
     assert all(0 < r["bought_share"] <= 1 and 1 <= r["average_order"] <= tables.rr_count for r in bought)
     assert sum(r["bought_share"] for r in rows) == pytest.approx(s["average_railroads_sold"], abs=1.0)
     assert simulate(60, players=4, seed=3, tables=tables, workers=2)["purchases"] == rows
+
+
+def test_winner_railroad_statistics_add_up(tables):
+    s = simulate(60, players=4, seed=3, tables=tables)
+    rows = s["winner_railroads"]
+    assert len(rows) == tables.rr_count
+    assert [r["winner_share"] for r in rows] == sorted((r["winner_share"] for r in rows), reverse=True)
+    assert all(0 <= r["winner_share"] <= 1 for r in rows)
+    # The winner's railroads, counted railroad by railroad, are the winner's railroads counted game by game.
+    assert sum(r["winner_share"] for r in rows) == pytest.approx(s["average_winner_railroads"])
+    assert simulate(60, players=4, seed=3, tables=tables, workers=2)["winner_railroads"] == rows

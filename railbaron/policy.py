@@ -20,6 +20,9 @@ from __future__ import annotations
 
 from typing import Optional
 
+import numpy as np
+
+from .expected import trip_costs, turn_graph
 from .tables import search
 
 BANK = -1          # owner number for a railroad nobody has bought
@@ -35,6 +38,7 @@ class Policy:
     MOVE_SUPERCHIEF = 10
     AVOID = 3.0             # how hard the detour search steers off opponent track
     REPLAN = True           # look for a new route mid-trip when the planned one gets dearer
+    EVERY_ROLL = False      # be asked for a route again on every roll, with the roll known (game.roll)
 
     # ---- what a railroad is worth
     FEE_OUTLOOK = 15000     # dollars a railroad earns or saves each time it matters (set by tournament)
@@ -384,6 +388,181 @@ class Policy:
                     lock += t.mass(shut)
             share += self.LOCK_WEIGHT * lock
         return dollars * share
+
+
+class ExpectedCostPolicy(Policy):
+    """PLAYER CHOICE 2, by calculation instead of by rule of thumb.
+
+    A CALCULATED DECISION. Every other default in this file is a quick rule.
+    This one works the answer out: for the roll just made, it takes the move
+    with the lowest expected cost for the rest of the trip, where cost is fees
+    plus TURN_VALUE for every turn the trip takes. The expectation is over
+    every future roll, each played as well as possible. See expected.py.
+
+    It is exact for the question it asks. What it leaves out:
+
+      - The question is about dollars and turns, not about winning. Paying
+        the leader counts the same as paying the player in last place.
+      - It assumes ownership stays as it is for the rest of the trip.
+      - Track ridden earlier in the trip is treated as open when costs are
+        worked out, and then avoided when the move is made.
+
+    It costs far more time than the rule of thumb. Whether it is worth that
+    is recorded in the README under "Route choice by calculation".
+    """
+
+    EVERY_ROLL = True
+    TURN_VALUE = 3500       # dollars a turn is worth: what a player would pay to arrive a turn sooner
+    RIVAL_GAIN = 0.0        # extra weight on a fee paid to an opponent, as a share of the fee
+    SLACK = 10              # how many dots longer than the shortest route a way round may be
+    TOLERANCE = 100         # dollars: the sums stop when no answer moves by more than this
+
+    def choose_route(self, game, p, src: int, dst: int, blocked: Optional[set] = None):
+        t = game.tables
+        roll = game.roll
+        if roll is None or roll[0] != p.index:
+            # Not moving yet. Any legal route will do: it is chosen again on the roll.
+            if blocked is None:
+                game.route_note = None
+                first = t.shortest(src, dst)
+                picks = weigh(first[1], game.owner, p.index, game.rate, self.MOVE)[1]
+                return first[0], _spread(picks, first[1])
+            return super().choose_route(game, p, src, dst, blocked)
+
+        _, count, bonus = roll
+        game.route_note = None
+        g = turn_graph(t)
+        table, column, kind, outside, classes, fees = self._costs(game, p, src, dst)
+        prev = p.trail[-1][0] if p.trail else None
+        arc = g.start[src] if prev is None else g.arc_id[(prev, src)]
+        paid = 0
+        for o in game.due:
+            bit = kind[classes_of(o, p.index)]
+            if bit >= 0:
+                paid |= 1 << bit
+        est = p.est
+        used = set(blocked) if blocked else set()
+        steps = g.steps
+        dots, rrs, here, k = [src], [], src, count
+        while k and here != dst:
+            best = None
+            for to, r, there in steps[arc]:
+                if (here, there, r) in used:
+                    continue
+                c = classes[r]
+                bit = kind[c]
+                state = paid
+                if bit < 0:
+                    fee = fees[c]               # the bank, or an owner the sums left out
+                elif paid >> bit & 1:
+                    fee = 0
+                else:
+                    fee = fees[c]
+                    state = paid | 1 << bit
+                if fee and est is not None and est.get(r, fee) < fee:
+                    fee = est[r]
+                at = column[to]
+                if at < 0:
+                    value = fee + outside[-at - 1]
+                elif bonus:         # the bonus die is still to come: average over it
+                    value = fee + table[k:k + 6, at, state].sum() / 6
+                else:
+                    value = fee + table[k - 1, at, state]
+                if best is None or value < best[0]:
+                    best = (value, to, r, there, state)
+            if best is None:
+                return p.dots[p.step:], p.rrs[p.step:]          # boxed in: keep to the route in hand
+            _, arc, r, there, paid = best
+            used.add((here, there, r))
+            used.add((there, here, r))
+            if est is not None:
+                est = {r: est[r]} if r in est else None
+            dots.append(there)
+            rrs.append(r)
+            here = there
+            k -= 1
+        if here != dst:
+            tail = self._finish(game, p, here, dst, used)
+            if tail is None:
+                return p.dots[p.step:], p.rrs[p.step:]          # that move leads nowhere legal
+            dots += tail[0][1:]
+            rrs += tail[1]
+        return tuple(dots), tuple(rrs)
+
+    def _costs(self, game, p, src: int, dst: int):
+        """The cost table for the trip to dst, worked out again only when something it rests on changes."""
+        me, owner, memo = p.index, game.owner, game.memo
+        setting = (dst, p.express, p.superchief, game.rate)
+        found = memo.get(me)
+        warm = None
+        if found is not None and found[0] == setting:
+            snap, railroads, answer = found[1], found[2], found[3]
+            if answer[1][game.tables._turn_graph.start[src]] >= 0:
+                if snap == owner:
+                    return answer
+                changed = [r for r in railroads if snap[r] != owner[r]]
+                if not changed:
+                    return answer
+                # A railroad it rested on has changed hands. That only matters if the
+                # line is still within reach of the trip from where the pawn is now:
+                # working it out afresh from here would not look any further.
+                g = game.tables._turn_graph
+                hops = g.hops
+                near = hops[src] + hops[dst] <= hops[src][dst] + self.SLACK
+                if not any(near[g.on_line[r]].any() for r in changed):
+                    return answer
+            warm = found[4]
+        classes = [0 if o < 0 or o == me else classes_of(o, me) for o in owner]
+        fees = [0] + [game.rate * (1 + self.RIVAL_GAIN)] * (len(game.players) - 1)
+        if warm is None:
+            warm = memo.get(("to", dst))        # someone else's answer for the same city is a good start
+        start, table, column, kind, railroads, outside = trip_costs(
+            game.tables, dst, src, classes, fees, p.express, p.superchief, self.TURN_VALUE, warm, self.SLACK, self.TOLERANCE)
+        answer = (table, column.tolist(), kind.tolist(), outside.tolist(), classes, fees)
+        memo[me] = (setting, list(owner), np.flatnonzero(railroads).tolist(), answer, start)
+        memo["to", dst] = start
+        return answer
+
+    def _finish(self, game, p, src: int, dst: int, used: set):
+        """Any legal way on from src to dst that keeps off `used` track. It only
+        shows that the move does not trap the pawn; the next roll chooses again."""
+        t = game.tables
+        dots, runs = t.shortest(src, dst)[:2]
+        rrs, k, clear = [], 0, True
+        for options, count in runs:
+            for _ in range(count):
+                a, b = dots[k], dots[k + 1]
+                for r in options:
+                    if (a, b, r) not in used:
+                        rrs.append(r)
+                        break
+                else:
+                    clear = False
+                    break
+                k += 1
+            if not clear:
+                break
+        if clear:
+            return dots, rrs
+        theirs = game.sold_mask & ~p.own_mask
+        found = search(t, src, dst, ~theirs, self.STEP_VALUE, int(game.rate * self.AVOID) // self.MOVE, used)
+        if found is None:
+            return None
+        picks = weigh(found[1], game.owner, p.index, game.rate, self.MOVE)[1]
+        return found[0], list(_spread(picks, found[1]))
+
+
+def classes_of(owner: int, me: int) -> int:
+    """The fee class of an opponent: 1 and up, skipping the player's own number."""
+    return owner + 1 if owner < me else owner
+
+
+def _spread(picks, runs) -> tuple:
+    """One railroad per run, written out as one railroad per step."""
+    rrs = []
+    for r, (_, count) in zip(picks, runs):
+        rrs += [r] * count
+    return tuple(rrs)
 
 
 # REACH[d]: chance that two dice total at least d.

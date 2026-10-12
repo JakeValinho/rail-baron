@@ -12,7 +12,9 @@ Run everything from the project folder. Setup: `pip install -r requirements.txt`
 | `python -m railbaron.game --games 5000 --workers 0` | Same, on every processor (much faster) |
 | `python -m railbaron.game --games 5000 --players 6` | 3 to 6 players (default 4) |
 | `python -m railbaron.game --games 5000 --seed 1` | Same dice every run |
+| `python -m railbaron.game --games 500 --workers 0 --routes calculated` | Players work out the best move for every roll. Wins more, about 45 times slower. |
 | `python -m railbaron.game --games 5000 --purchases` | Also print the order in which railroads are bought |
+| `python -m railbaron.game --games 5000 --winners` | Also print how often the winner owns each railroad |
 | `python -m railbaron.game --choices` | Print the region-choice table |
 | `python -m railbaron.destinations` | Destination odds, average payoff, dice speed test |
 | `python examples/board_demo.py` | Sample routes, reachable dots, railroad values |
@@ -24,6 +26,7 @@ Run everything from the project folder. Setup: `pip install -r requirements.txt`
 |---|---|
 | `python -m railbaron.game` | Play one recorded game and open it in the browser |
 | `python -m railbaron.game --players 6 --seed 7` | Choose player count and dice |
+| `python -m railbaron.game --routes calculated` | Watch a game played with calculated routes |
 | `python -m railbaron.game --no-open` | Write `map.html` without opening it |
 | `python -m railbaron.render --open` | Rebuild and open the map page |
 | `start map.html` | Open the existing page without rebuilding |
@@ -51,6 +54,7 @@ Data flows one way: CSV files, then lookup tables, then the engine, then the pag
 | `railbaron/tables.py` | Everything numbered as integers for speed, plus the route search. |
 | `railbaron/game.py` | **The rules.** Turns, movement, fees, purchases, sales, auctions, winning. |
 | `railbaron/policy.py` | **The decisions.** Every choice a player makes, and nothing else. |
+| `railbaron/expected.py` | Expected cost of a trip over every future roll. Used by the calculated route choice. |
 | `railbaron/layout.py` | Dot positions: geographic, and even-spacing. |
 | `railbaron/geography.py` | Rough outline of the country, bent to fit the board. Background only. |
 | `railbaron/render.py` | Packs board, tables and recorded games into `map_template.html`, written out as `map.html`. |
@@ -91,6 +95,23 @@ simulate(2000, players=4, policies=[Cautious(), Policy(), Policy(), Policy()], w
 ```
 
 The result's `win_share_by_seat` shows how seat 1 did against the defaults.
+
+## Route choice by calculation
+
+A calculated decision, not a rule of thumb. `ExpectedCostPolicy` in `policy.py` replaces decision 2. On every roll it takes the move with the lowest expected cost for the rest of the trip: fees, plus $3,500 for each turn. The expectation covers every future roll, each played as well as possible.
+
+Measured over 2,400 four-player games, two seats each way:
+
+| | Quick rule (default) | Calculated |
+|---|---|---|
+| Wins head to head | 43.1% | 56.9% |
+| Games a second, 16 processors | about 270 | about 6 |
+
+It is not the default because of the speed. Use it with `--routes calculated`, or pass `policies=ExpectedCostPolicy()`. It needs `numba`; without it the answers are the same and far slower.
+
+What it leaves out: it counts dollars and turns, not the chance of winning; it assumes ownership stays as it is for the rest of the trip; and it looks no further than 10 dots off the shortest route.
+
+Settings tried and rejected, each over 800 games: a turn worth $2,000, $5,000 or $7,000 (56.9%, 55.6%, 54.9% against 58.4% for $3,500 in the same test); fees to opponents weighted 1.5 times (56.0%); looking 20 dots off the shortest route (58.2%, slower) or 5 (55.0%, faster).
 
 ## Not in the engine
 
